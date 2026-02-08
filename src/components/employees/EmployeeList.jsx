@@ -588,6 +588,7 @@ const EmployeeList = () => {
       {/* Employee Detail Modal */}
       {showDetailModal && selectedEmployee && (
         <EmployeeDetailModal 
+          key={selectedEmployee.id}
           employee={selectedEmployee}
           onClose={() => setShowDetailModal(false)}
           onEdit={() => {
