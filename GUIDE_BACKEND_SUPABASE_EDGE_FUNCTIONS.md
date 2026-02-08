@@ -67,7 +67,7 @@ supabase functions deploy performance --no-verify-jwt
 supabase functions deploy departments --no-verify-jwt
 ```
 
-> **Important** : `--no-verify-jwt` est requis pour les fonctions de données (evenements, requests, employees) car la clé `sb_publishable_` n’est pas un JWT et provoque des 401 sans cela.
+> **Important** : `--no-verify-jwt` est requis pour les fonctions de données TOUTES les fonctions car la clé `sb_publishable_` n’est pas un JWT et provoque des 401 sans cela. Redéployer avec `--no-verify-jwt` si vous avez des erreurs 401.
 
 ### Variables d'environnement (Supabase Dashboard)
 

@@ -7,7 +7,10 @@ const isSupabase = API_URL?.includes?.('supabase.co');
 
 const defaultHeaders = {
   'Content-Type': 'application/json',
-  ...(isSupabase && SUPABASE_ANON_KEY && { Authorization: `Bearer ${SUPABASE_ANON_KEY}` }),
+  ...(isSupabase && SUPABASE_ANON_KEY && {
+    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    apikey: SUPABASE_ANON_KEY
+  }),
 };
 
 // Instance axios avec la configuration de base

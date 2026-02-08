@@ -18,6 +18,7 @@ api.interceptors.request.use(
 
     if (isSupabase && supabaseAnonKey) {
       config.headers.Authorization = `Bearer ${supabaseAnonKey}`;
+      config.headers.apikey = supabaseAnonKey;
     } else if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

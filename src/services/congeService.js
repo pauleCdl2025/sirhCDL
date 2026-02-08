@@ -2,14 +2,37 @@ import axios from 'axios';
 
 // API base URL
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const isSupabase = API_URL?.includes?.('supabase.co');
+
+const defaultHeaders = {
+  'Content-Type': 'application/json',
+  ...(isSupabase && SUPABASE_ANON_KEY && {
+    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    apikey: SUPABASE_ANON_KEY
+  })
+};
 
 // Création d'une instance axios avec l'URL de base
 const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  headers: defaultHeaders
 });
+
+// Intercepteur pour ajouter le token ou la clé Supabase (priorité Supabase si utilisée)
+api.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem('token');
+    if (isSupabase && SUPABASE_ANON_KEY) {
+      config.headers.Authorization = `Bearer ${SUPABASE_ANON_KEY}`;
+      config.headers.apikey = SUPABASE_ANON_KEY;
+    } else if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // Service pour les congés
 export const congeService = {
