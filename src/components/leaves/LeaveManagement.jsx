@@ -1204,11 +1204,11 @@ const LeaveManagement = () => {
                           width: '30px', 
                           height: '30px', 
                           fontSize: '0.75rem',
-                          backgroundColor: `hsl(${selectedConge.nom_employe.length * 15}, 70%, 50%)` 
+                          backgroundColor: `hsl(${(selectedConge.nom_employe || '').length * 15}, 70%, 50%)` 
                         }}>
-                          {getInitials(selectedConge.nom_employe)}
+                          {getInitials(selectedConge.nom_employe || '')}
                         </div>
-                        <span className="fw-bold">{selectedConge.nom_employe}</span>
+                        <span className="fw-bold">{selectedConge.nom_employe || '-'}</span>
                       </div>
                     </div>
                   </div>
@@ -1396,7 +1396,7 @@ const LeaveManagement = () => {
               ></button>
             </div>
             <div className="modal-body">
-              <p>Vous êtes sur le point de refuser la demande de congé de <strong>{selectedConge.nom_employe}</strong>.</p>
+              <p>Vous êtes sur le point de refuser la demande de congé de <strong>{selectedConge.nom_employe || '-'}</strong>.</p>
               
               <div className="mb-3">
                 <label htmlFor="rejectReason" className="form-label">Motif du refus <span className="text-danger">*</span></label>
