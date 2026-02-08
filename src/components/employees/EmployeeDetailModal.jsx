@@ -24,7 +24,7 @@ const EmployeeDetailModal = ({ employee, onClose, onEdit, onPrint }) => {
       }
     };
     fetchFull();
-  }, [employee?.id]);
+  }, [employee]);
   const [loadingDocuments, setLoadingDocuments] = useState(false);
   const [documentError, setDocumentError] = useState(null);
   const [documents, setDocuments] = useState([]);
