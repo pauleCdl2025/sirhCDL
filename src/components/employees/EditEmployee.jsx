@@ -252,7 +252,7 @@ const EditEmployee = () => {
         };
 
         if (id) loadEmployee();
-    }, [id]);
+    }, [id, listEmployee]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
