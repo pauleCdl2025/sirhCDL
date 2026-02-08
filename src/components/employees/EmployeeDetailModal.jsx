@@ -1,11 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { formatDate } from '../../utils/dateUtils';
 import { decodeHtmlEntities } from '../../utils/textUtils';
+import employeeService from '../../services/employeeService';
 import '../../styles/EmployeeDetailModal.css';
 
 const EmployeeDetailModal = ({ employee, onClose, onEdit, onPrint }) => {
+  const [displayEmployee, setDisplayEmployee] = useState(employee || {});
   const [activeTab, setActiveTab] = useState('info');
   const [showContactInfo, setShowContactInfo] = useState(false);
+
+  // Charger les données complètes de l'employé à l'ouverture du modal
+  useEffect(() => {
+    if (!employee?.id) return;
+    setDisplayEmployee(employee);
+    const fetchFull = async () => {
+      try {
+        if (employeeService?.getById) {
+          const full = await employeeService.getById(employee.id);
+          if (full && typeof full === 'object') setDisplayEmployee(full);
+        }
+      } catch (err) {
+        console.warn('Détails employé non chargés, utilisation des données liste:', err);
+      }
+    };
+    fetchFull();
+  }, [employee?.id]);
   const [loadingDocuments, setLoadingDocuments] = useState(false);
   const [documentError, setDocumentError] = useState(null);
   const [documents, setDocuments] = useState([]);
@@ -113,26 +132,26 @@ const EmployeeDetailModal = ({ employee, onClose, onEdit, onPrint }) => {
           id: 1,
           name: 'Contrat de travail',
           type: 'contrat',
-          date: employee.date_entree,
+          date: displayEmployee.date_entree,
           status: 'Signé'
         });
         
-        if (employee.cnss_number) {
+        if (displayEmployee.cnss_number) {
           mockDocuments.push({
             id: 2,
             name: 'Attestation CNSS',
             type: 'administratif',
-            date: employee.date_entree,
+            date: displayEmployee.date_entree,
             status: 'Validé'
           });
         }
         
-        if (employee.cnamgs_number) {
+        if (displayEmployee.cnamgs_number) {
           mockDocuments.push({
             id: 3,
             name: 'Attestation CNAMGS',
             type: 'administratif',
-            date: employee.date_entree,
+            date: displayEmployee.date_entree,
             status: 'Validé'
           });
         }
@@ -157,7 +176,7 @@ const EmployeeDetailModal = ({ employee, onClose, onEdit, onPrint }) => {
     if (activeTab === 'contact') {
       fetchDocuments();
     }
-  }, [activeTab, employee.cnss_number, employee.cnamgs_number, employee.date_entree]);
+  }, [activeTab, displayEmployee?.cnss_number, displayEmployee?.cnamgs_number, displayEmployee?.date_entree]);
 
   // Filtre les documents selon la recherche
   const filteredDocuments = documents.filter(doc => 
@@ -167,26 +186,26 @@ const EmployeeDetailModal = ({ employee, onClose, onEdit, onPrint }) => {
   );
 
   // Calculer les données supplémentaires
-  const retirementDate = calculateRetirementDate(employee.date_naissance);
-  const calculatedAge = calculateAge(employee.date_naissance) || employee.age || 'Non spécifié';
-  const seniority = calculateSeniority(employee.date_entree) || employee.anciennete || 'Non spécifié';
-  const remainingDays = calculateRemainingDays(employee.date_fin_contrat);
+  const retirementDate = calculateRetirementDate(displayEmployee.date_naissance);
+  const calculatedAge = calculateAge(displayEmployee.date_naissance) || displayEmployee.age || 'Non spécifié';
+  const seniority = calculateSeniority(displayEmployee.date_entree) || displayEmployee.anciennete || 'Non spécifié';
+  const remainingDays = calculateRemainingDays(displayEmployee.date_fin_contrat);
   
   // Calculer le montant total de la rémunération
   const totalRemuneration = () => {
-    const salaire = parseFloat(employee.salaire_base) || 0;
+    const salaire = parseFloat(displayEmployee.salaire_base) || 0;
     const primes = [
-      parseFloat(employee.prime_responsabilite) || 0,
-      parseFloat(employee.prime_penibilite) || 0,
-      parseFloat(employee.prime_logement) || 0,
-      parseFloat(employee.prime_transport) || 0,
-      parseFloat(employee.prime_anciennete) || 0,
-      parseFloat(employee.prime_enfant) || 0,
-      parseFloat(employee.prime_representation) || 0,
-      parseFloat(employee.prime_performance) || 0,
-      parseFloat(employee.prime_astreinte) || 0,
-      parseFloat(employee.honoraires) || 0,
-      parseFloat(employee.indemnite_stage) || 0
+      parseFloat(displayEmployee.prime_responsabilite) || 0,
+      parseFloat(displayEmployee.prime_penibilite) || 0,
+      parseFloat(displayEmployee.prime_logement) || 0,
+      parseFloat(displayEmployee.prime_transport) || 0,
+      parseFloat(displayEmployee.prime_anciennete) || 0,
+      parseFloat(displayEmployee.prime_enfant) || 0,
+      parseFloat(displayEmployee.prime_representation) || 0,
+      parseFloat(displayEmployee.prime_performance) || 0,
+      parseFloat(displayEmployee.prime_astreinte) || 0,
+      parseFloat(displayEmployee.honoraires) || 0,
+      parseFloat(displayEmployee.indemnite_stage) || 0
     ];
     
     return salaire + primes.reduce((a, b) => a + b, 0);
@@ -195,7 +214,7 @@ const EmployeeDetailModal = ({ employee, onClose, onEdit, onPrint }) => {
   // Gérer l'impression des détails de l'employé
   const handlePrint = () => {
     if (onPrint) {
-      onPrint(employee);
+      onPrint(displayEmployee);
     } else {
       // Version par défaut utilisant l'API du navigateur
       window.print();
@@ -206,17 +225,17 @@ const EmployeeDetailModal = ({ employee, onClose, onEdit, onPrint }) => {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: `Profil de ${decodeHtmlEntities(employee.nom_prenom)}`,
-        text: `Profil employé de ${decodeHtmlEntities(employee.nom_prenom)}, ${decodeHtmlEntities(employee.poste_actuel)} à ${decodeHtmlEntities(employee.entity)}`,
+        title: `Profil de ${decodeHtmlEntities(displayEmployee.nom_prenom)}`,
+        text: `Profil employé de ${decodeHtmlEntities(displayEmployee.nom_prenom)}, ${decodeHtmlEntities(displayEmployee.poste_actuel)} à ${decodeHtmlEntities(displayEmployee.entity)}`,
         url: window.location.href
       });
     } else {
       // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
       const shareText = `
-Profil employé de ${decodeHtmlEntities(employee.nom_prenom)}
-Poste: ${decodeHtmlEntities(employee.poste_actuel)}
-Entité: ${decodeHtmlEntities(employee.entity)}
-Email: ${employee.email}
+Profil employé de ${decodeHtmlEntities(displayEmployee.nom_prenom)}
+Poste: ${decodeHtmlEntities(displayEmployee.poste_actuel)}
+Entité: ${decodeHtmlEntities(displayEmployee.entity)}
+Email: ${displayEmployee.email}
       `.trim();
       
       navigator.clipboard.writeText(shareText).then(() => {
@@ -260,8 +279,8 @@ Email: ${employee.email}
           {/* En-tête du profil employé */}
           <div className="employee-header">
             <div className="employee-avatar">
-              {employee.photo ? (
-                <img src={employee.photo} alt={decodeHtmlEntities(employee.nom_prenom)} />
+              {displayEmployee.photo ? (
+                <img src={displayEmployee.photo} alt={decodeHtmlEntities(displayEmployee.nom_prenom)} />
               ) : (
                 <div className="avatar-placeholder">
                   {((decodeHtmlEntities(employee?.nom_prenom) ?? '').split(' ').slice(0, 2).map(name => name?.charAt(0) || '').join('').toUpperCase()) || '?'}
@@ -269,20 +288,20 @@ Email: ${employee.email}
               )}
             </div>
             <div className="employee-main-info">
-              <h4 className="employee-name">{decodeHtmlEntities(employee.nom_prenom)}</h4>
-              <p className="employee-position">{decodeHtmlEntities(employee.poste_actuel) || 'Non spécifié'}</p>
+              <h4 className="employee-name">{decodeHtmlEntities(displayEmployee.nom_prenom)}</h4>
+              <p className="employee-position">{decodeHtmlEntities(displayEmployee.poste_actuel) || 'Non spécifié'}</p>
               <div className="employee-meta">
-                <span className={`badge contract-badge ${employee.type_contrat === 'CDI' ? 'bg-success' : employee.type_contrat === 'CDD' ? 'bg-warning text-dark' : 'bg-info'}`}>
-                  {decodeHtmlEntities(employee.type_contrat) || 'Non spécifié'}
+                <span className={`badge contract-badge ${displayEmployee.type_contrat === 'CDI' ? 'bg-success' : displayEmployee.type_contrat === 'CDD' ? 'bg-warning text-dark' : 'bg-info'}`}>
+                  {decodeHtmlEntities(displayEmployee.type_contrat) || 'Non spécifié'}
                 </span>
-                {employee.statut_employe && (
+                {displayEmployee.statut_employe && (
                   <span className="badge bg-secondary ms-2">
-                    {employee.statut_employe}
+                    {displayEmployee.statut_employe}
                   </span>
                 )}
-                {employee.nationalite && (
+                {displayEmployee.nationalite && (
                   <span className="badge bg-primary ms-2">
-                    {employee.nationalite}
+                    {displayEmployee.nationalite}
                   </span>
                 )}
               </div>
@@ -299,7 +318,7 @@ Email: ${employee.email}
               {onEdit && (
                 <button 
                   className="btn btn-sm btn-primary ms-2"
-                  onClick={() => onEdit(employee)}
+                  onClick={() => onEdit(displayEmployee)}
                 >
                   <i className="fas fa-edit me-1"></i>
                   Modifier
@@ -312,22 +331,22 @@ Email: ${employee.email}
           {showContactInfo && (
             <div className="contact-info-card animated fadeIn">
               <div className="contact-grid">
-                {employee.email && (
+                {displayEmployee.email && (
                   <div className="contact-item">
                     <i className="fas fa-envelope"></i>
-                    <a href={`mailto:${employee.email}`}>{employee.email}</a>
+                    <a href={`mailto:${displayEmployee.email}`}>{displayEmployee.email}</a>
                   </div>
                 )}
-                {employee.telephone && (
+                {displayEmployee.telephone && (
                   <div className="contact-item">
                     <i className="fas fa-phone"></i>
-                    <a href={`tel:${employee.telephone}`}>{employee.telephone}</a>
+                    <a href={`tel:${displayEmployee.telephone}`}>{displayEmployee.telephone}</a>
                   </div>
                 )}
-                {employee.adresse && (
+                {displayEmployee.adresse && (
                   <div className="contact-item">
                     <i className="fas fa-map-marker-alt"></i>
-                    <span>{employee.adresse}</span>
+                    <span>{displayEmployee.adresse}</span>
                   </div>
                 )}
               </div>
@@ -356,7 +375,7 @@ Email: ${employee.email}
               </div>
             </div>
             
-            {employee.type_contrat === 'CDD' && remainingDays !== null && (
+            {displayEmployee.type_contrat === 'CDD' && remainingDays !== null && (
               <div className="metric-card">
                 <div className="metric-icon">
                   <i className="fas fa-hourglass-half"></i>
@@ -429,17 +448,17 @@ Email: ${employee.email}
                     <div className="info-grid">
                       <div className="info-item">
                         <span className="info-label">Matricule</span>
-                        <span className="info-value">{employee.matricule || 'Non assigné'}</span>
+                        <span className="info-value">{displayEmployee.matricule || 'Non assigné'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Genre</span>
-                        <span className="info-value">{employee.genre || 'Non spécifié'}</span>
+                        <span className="info-value">{displayEmployee.genre || 'Non spécifié'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Date de naissance</span>
                         <span className="info-value">
-                          {employee.date_naissance && employee.date_naissance !== '0000-00-00' 
-                            ? formatDate(employee.date_naissance) 
+                          {displayEmployee.date_naissance && displayEmployee.date_naissance !== '0000-00-00' 
+                            ? formatDate(displayEmployee.date_naissance) 
                             : 'Non spécifié'}
                         </span>
                       </div>
@@ -449,15 +468,15 @@ Email: ${employee.email}
                       </div>
                       <div className="info-item">
                         <span className="info-label">Statut marital</span>
-                        <span className="info-value">{employee.statut_marital || 'Non spécifié'}</span>
+                        <span className="info-value">{displayEmployee.statut_marital || 'Non spécifié'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Nombre d'enfants</span>
-                        <span className="info-value">{employee.enfants || '0'}</span>
+                        <span className="info-value">{displayEmployee.enfants || '0'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Nationalité</span>
-                        <span className="info-value">{employee.nationalite || 'Non spécifié'}</span>
+                        <span className="info-value">{displayEmployee.nationalite || 'Non spécifié'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Départ retraite</span>
@@ -478,29 +497,29 @@ Email: ${employee.email}
                     <div className="info-grid">
                       <div className="profile-info-item">
                         <span className="info-label">Département</span>
-                        <span className="info-value">{decodeHtmlEntities(employee.functional_area) || 'Non spécifié'}</span>
+                        <span className="info-value">{decodeHtmlEntities(displayEmployee.functional_area) || 'Non spécifié'}</span>
                       </div>
                       <div className="profile-info-item">
                         <span className="info-label">Entité</span>
-                        <span className="info-value">{decodeHtmlEntities(employee.entity) || 'Non spécifié'}</span>
+                        <span className="info-value">{decodeHtmlEntities(displayEmployee.entity) || 'Non spécifié'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Responsable</span>
-                        <span className="info-value">{employee.responsable || 'Non spécifié'}</span>
+                        <span className="info-value">{displayEmployee.responsable || 'Non spécifié'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Niveau d'étude</span>
-                        <span className="info-value">{employee.niveau_etude || 'Non spécifié'}</span>
+                        <span className="info-value">{displayEmployee.niveau_etude || 'Non spécifié'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Spécialisation</span>
-                        <span className="info-value">{employee.specialisation || 'Non spécifié'}</span>
+                        <span className="info-value">{displayEmployee.specialisation || 'Non spécifié'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Statut du dossier</span>
                         <span className="info-value">
-                          <span className={`status-badge ${employee.statut_dossier === 'Actif' ? 'active' : employee.statut_dossier === 'Inactif' ? 'inactive' : 'pending'}`}>
-                            {employee.statut_dossier || 'Non spécifié'}
+                          <span className={`status-badge ${displayEmployee.statut_dossier === 'Actif' ? 'active' : displayEmployee.statut_dossier === 'Inactif' ? 'inactive' : 'pending'}`}>
+                            {displayEmployee.statut_dossier || 'Non spécifié'}
                           </span>
                         </span>
                       </div>
@@ -523,30 +542,30 @@ Email: ${employee.email}
                       <div className="info-item">
                         <span className="info-label">Type de contrat</span>
                         <span className="info-value">
-                          <span className={`contract-type-badge ${employee.type_contrat === 'CDI' ? 'cdi' : employee.type_contrat === 'CDD' ? 'cdd' : 'autre'}`}>
-                            {decodeHtmlEntities(employee.type_contrat) || 'Non spécifié'}
+                          <span className={`contract-type-badge ${displayEmployee.type_contrat === 'CDI' ? 'cdi' : displayEmployee.type_contrat === 'CDD' ? 'cdd' : 'autre'}`}>
+                            {decodeHtmlEntities(displayEmployee.type_contrat) || 'Non spécifié'}
                           </span>
                         </span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Type d'employé</span>
-                        <span className="info-value">{employee.employee_type || 'Non spécifié'}</span>
+                        <span className="info-value">{displayEmployee.employee_type || 'Non spécifié'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Date d'embauche</span>
                         <span className="info-value">
-                          {employee.date_entree && employee.date_entree !== '0000-00-00' 
-                            ? formatDate(employee.date_entree) 
+                          {displayEmployee.date_entree && displayEmployee.date_entree !== '0000-00-00' 
+                            ? formatDate(displayEmployee.date_entree) 
                             : 'Non spécifié'}
                         </span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Date de fin</span>
                         <span className="info-value">
-                          {employee.date_fin_contrat && employee.date_fin_contrat !== '0000-00-00' 
+                          {displayEmployee.date_fin_contrat && displayEmployee.date_fin_contrat !== '0000-00-00' 
                             ? (
                               <>
-                                {formatDate(employee.date_fin_contrat)}
+                                {formatDate(displayEmployee.date_fin_contrat)}
                                 {remainingDays !== null && remainingDays >= 0 && (
                                   <span className={`days-remaining ${remainingDays < 30 ? 'danger' : remainingDays < 90 ? 'warning' : 'success'}`}>
                                     ({remainingDays} jour{remainingDays > 1 ? 's' : ''})
@@ -563,7 +582,7 @@ Email: ${employee.email}
                       </div>
                       <div className="info-item">
                         <span className="info-label">Catégorie</span>
-                        <span className="info-value">{employee.categorie || 'Non spécifié'}</span>
+                        <span className="info-value">{displayEmployee.categorie || 'Non spécifié'}</span>
                       </div>
                     </div>
 
@@ -584,37 +603,37 @@ Email: ${employee.email}
                         <div className="remuneration-breakdown">
                           <div className="breakdown-item">
                             <div className="breakdown-label">Base</div>
-                            <div className="breakdown-value">{formatMontant(employee.salaire_base)}</div>
+                            <div className="breakdown-value">{formatMontant(displayEmployee.salaire_base)}</div>
                             <div className="breakdown-bar">
                               <div 
                                 className="breakdown-fill" 
-                                style={{ width: `${(parseFloat(employee.salaire_base) / totalRemuneration()) * 100}%` }}
+                                style={{ width: `${(parseFloat(displayEmployee.salaire_base) / (totalRemuneration() || 1)) * 100}%` }}
                               ></div>
                             </div>
                           </div>
                           
-                          {(employee.prime_responsabilite > 0 || 
-                            employee.prime_penibilite > 0 || 
-                            employee.prime_logement > 0 || 
-                            employee.prime_transport > 0 || 
-                            employee.prime_anciennete > 0 || 
-                            employee.prime_enfant > 0 || 
-                            employee.prime_representation > 0 || 
-                            employee.prime_performance > 0 || 
-                            employee.prime_astreinte > 0) && (
+                          {(displayEmployee.prime_responsabilite > 0 || 
+                            displayEmployee.prime_penibilite > 0 || 
+                            displayEmployee.prime_logement > 0 || 
+                            displayEmployee.prime_transport > 0 || 
+                            displayEmployee.prime_anciennete > 0 || 
+                            displayEmployee.prime_enfant > 0 || 
+                            displayEmployee.prime_representation > 0 || 
+                            displayEmployee.prime_performance > 0 || 
+                            displayEmployee.prime_astreinte > 0) && (
                             <div className="breakdown-item">
                               <div className="breakdown-label">Primes</div>
                               <div className="breakdown-value">
                                 {formatMontant(
-                                  (parseFloat(employee.prime_responsabilite) || 0) +
-                                  (parseFloat(employee.prime_penibilite) || 0) +
-                                  (parseFloat(employee.prime_logement) || 0) +
-                                  (parseFloat(employee.prime_transport) || 0) +
-                                  (parseFloat(employee.prime_anciennete) || 0) +
-                                  (parseFloat(employee.prime_enfant) || 0) +
-                                  (parseFloat(employee.prime_representation) || 0) +
-                                  (parseFloat(employee.prime_performance) || 0) +
-                                  (parseFloat(employee.prime_astreinte) || 0)
+                                  (parseFloat(displayEmployee.prime_responsabilite) || 0) +
+                                  (parseFloat(displayEmployee.prime_penibilite) || 0) +
+                                  (parseFloat(displayEmployee.prime_logement) || 0) +
+                                  (parseFloat(displayEmployee.prime_transport) || 0) +
+                                  (parseFloat(displayEmployee.prime_anciennete) || 0) +
+                                  (parseFloat(displayEmployee.prime_enfant) || 0) +
+                                  (parseFloat(displayEmployee.prime_representation) || 0) +
+                                  (parseFloat(displayEmployee.prime_performance) || 0) +
+                                  (parseFloat(displayEmployee.prime_astreinte) || 0)
                                 )}
                               </div>
                               <div className="breakdown-bar">
@@ -622,29 +641,29 @@ Email: ${employee.email}
                                   className="breakdown-fill prime" 
                                   style={{ 
                                     width: `${(
-                                      (parseFloat(employee.prime_responsabilite) || 0) +
-                                      (parseFloat(employee.prime_penibilite) || 0) +
-                                      (parseFloat(employee.prime_logement) || 0) +
-                                      (parseFloat(employee.prime_transport) || 0) +
-                                      (parseFloat(employee.prime_anciennete) || 0) +
-                                      (parseFloat(employee.prime_enfant) || 0) +
-                                      (parseFloat(employee.prime_representation) || 0) +
-                                      (parseFloat(employee.prime_performance) || 0) +
-                                      (parseFloat(employee.prime_astreinte) || 0)
-                                    ) / totalRemuneration() * 100}%` 
+                                      (parseFloat(displayEmployee.prime_responsabilite) || 0) +
+                                      (parseFloat(displayEmployee.prime_penibilite) || 0) +
+                                      (parseFloat(displayEmployee.prime_logement) || 0) +
+                                      (parseFloat(displayEmployee.prime_transport) || 0) +
+                                      (parseFloat(displayEmployee.prime_anciennete) || 0) +
+                                      (parseFloat(displayEmployee.prime_enfant) || 0) +
+                                      (parseFloat(displayEmployee.prime_representation) || 0) +
+                                      (parseFloat(displayEmployee.prime_performance) || 0) +
+                                      (parseFloat(displayEmployee.prime_astreinte) || 0)
+                                    ) / (totalRemuneration() || 1) * 100}%` 
                                   }}
                                 ></div>
                               </div>
                             </div>
                           )}
                           
-                          {(employee.honoraires > 0 || employee.indemnite_stage > 0) && (
+                          {(displayEmployee.honoraires > 0 || displayEmployee.indemnite_stage > 0) && (
                             <div className="breakdown-item">
                               <div className="breakdown-label">Autres</div>
                               <div className="breakdown-value">
                                 {formatMontant(
-                                  (parseFloat(employee.honoraires) || 0) +
-                                  (parseFloat(employee.indemnite_stage) || 0)
+                                  (parseFloat(displayEmployee.honoraires) || 0) +
+                                  (parseFloat(displayEmployee.indemnite_stage) || 0)
                                 )}
                               </div>
                               <div className="breakdown-bar">
@@ -652,9 +671,9 @@ Email: ${employee.email}
                                   className="breakdown-fill other" 
                                   style={{ 
                                     width: `${(
-                                      (parseFloat(employee.honoraires) || 0) +
-                                      (parseFloat(employee.indemnite_stage) || 0)
-                                    ) / totalRemuneration() * 100}%` 
+                                      (parseFloat(displayEmployee.honoraires) || 0) +
+                                      (parseFloat(displayEmployee.indemnite_stage) || 0)
+                                    ) / (totalRemuneration() || 1) * 100}%` 
                                   }}
                                 ></div>
                               </div>
@@ -666,43 +685,43 @@ Email: ${employee.email}
                       <div className="info-grid mt-4">
                         <div className="info-item">
                           <span className="info-label">Type de rémunération</span>
-                          <span className="info-value">{employee.type_remuneration || 'Non spécifié'}</span>
+                          <span className="info-value">{displayEmployee.type_remuneration || 'Non spécifié'}</span>
                         </div>
                         <div className="info-item">
                           <span className="info-label">Mode de paiement</span>
-                          <span className="info-value">{employee.payment_mode || 'Non spécifié'}</span>
+                          <span className="info-value">{displayEmployee.payment_mode || 'Non spécifié'}</span>
                         </div>
                         <div className="info-item">
                           <span className="info-label">Salaire de base</span>
-                          <span className="info-value">{formatMontant(employee.salaire_base)}</span>
+                          <span className="info-value">{formatMontant(displayEmployee.salaire_base)}</span>
                         </div>
                         <div className="info-item">
                           <span className="info-label">Salaire net</span>
-                          <span className="info-value">{formatMontant(employee.salaire_net)}</span>
+                          <span className="info-value">{formatMontant(displayEmployee.salaire_net)}</span>
                         </div>
-                        {employee.honoraires > 0 && (
+                        {displayEmployee.honoraires > 0 && (
                           <div className="info-item">
                             <span className="info-label">Honoraires</span>
-                            <span className="info-value">{formatMontant(employee.honoraires)}</span>
+                            <span className="info-value">{formatMontant(displayEmployee.honoraires)}</span>
                           </div>
                         )}
-                        {employee.indemnite_stage > 0 && (
+                        {displayEmployee.indemnite_stage > 0 && (
                           <div className="info-item">
                             <span className="info-label">Indemnité de stage</span>
-                            <span className="info-value">{formatMontant(employee.indemnite_stage)}</span>
+                            <span className="info-value">{formatMontant(displayEmployee.indemnite_stage)}</span>
                           </div>
                         )}
                       </div>
 
-                      {(employee.prime_responsabilite > 0 || 
-                        employee.prime_penibilite > 0 || 
-                        employee.prime_logement > 0 || 
-                        employee.prime_transport > 0 || 
-                        employee.prime_anciennete > 0 || 
-                        employee.prime_enfant > 0 || 
-                        employee.prime_representation > 0 || 
-                        employee.prime_performance > 0 || 
-                        employee.prime_astreinte > 0) && (
+                      {(displayEmployee.prime_responsabilite > 0 || 
+                        displayEmployee.prime_penibilite > 0 || 
+                        displayEmployee.prime_logement > 0 || 
+                        displayEmployee.prime_transport > 0 || 
+                        displayEmployee.prime_anciennete > 0 || 
+                        displayEmployee.prime_enfant > 0 || 
+                        displayEmployee.prime_representation > 0 || 
+                        displayEmployee.prime_performance > 0 || 
+                        displayEmployee.prime_astreinte > 0) && (
                         <div className="primes-section mt-4">
                           <div className="section-header">
                             <h6 className="section-subtitle">
@@ -711,58 +730,58 @@ Email: ${employee.email}
                             </h6>
                           </div>
                           <div className="info-grid">
-                            {employee.prime_responsabilite > 0 && (
+                            {displayEmployee.prime_responsabilite > 0 && (
                               <div className="info-item">
                                 <span className="info-label">Prime de responsabilité</span>
-                                <span className="info-value">{formatMontant(employee.prime_responsabilite)}</span>
+                                <span className="info-value">{formatMontant(displayEmployee.prime_responsabilite)}</span>
                               </div>
                             )}
-                            {employee.prime_penibilite > 0 && (
+                            {displayEmployee.prime_penibilite > 0 && (
                               <div className="info-item">
                                 <span className="info-label">Prime de pénibilité</span>
-                                <span className="info-value">{formatMontant(employee.prime_penibilite)}</span>
+                                <span className="info-value">{formatMontant(displayEmployee.prime_penibilite)}</span>
                               </div>
                             )}
-                            {employee.prime_logement > 0 && (
+                            {displayEmployee.prime_logement > 0 && (
                               <div className="info-item">
                                 <span className="info-label">Prime de logement</span>
-                                <span className="info-value">{formatMontant(employee.prime_logement)}</span>
+                                <span className="info-value">{formatMontant(displayEmployee.prime_logement)}</span>
                               </div>
                             )}
-                            {employee.prime_transport > 0 && (
+                            {displayEmployee.prime_transport > 0 && (
                               <div className="info-item">
                                 <span className="info-label">Prime de transport</span>
-                                <span className="info-value">{formatMontant(employee.prime_transport)}</span>
+                                <span className="info-value">{formatMontant(displayEmployee.prime_transport)}</span>
                               </div>
                             )}
-                            {employee.prime_anciennete > 0 && (
+                            {displayEmployee.prime_anciennete > 0 && (
                               <div className="info-item">
                                 <span className="info-label">Prime d'ancienneté</span>
-                                <span className="info-value">{formatMontant(employee.prime_anciennete)}</span>
+                                <span className="info-value">{formatMontant(displayEmployee.prime_anciennete)}</span>
                               </div>
                             )}
-                            {employee.prime_enfant > 0 && (
+                            {displayEmployee.prime_enfant > 0 && (
                               <div className="info-item">
                                 <span className="info-label">Prime enfant</span>
-                                <span className="info-value">{formatMontant(employee.prime_enfant)}</span>
+                                <span className="info-value">{formatMontant(displayEmployee.prime_enfant)}</span>
                               </div>
                             )}
-                            {employee.prime_representation > 0 && (
+                            {displayEmployee.prime_representation > 0 && (
                               <div className="info-item">
                                 <span className="info-label">Prime de représentation</span>
-                                <span className="info-value">{formatMontant(employee.prime_representation)}</span>
+                                <span className="info-value">{formatMontant(displayEmployee.prime_representation)}</span>
                               </div>
                             )}
-                            {employee.prime_performance > 0 && (
+                            {displayEmployee.prime_performance > 0 && (
                               <div className="info-item">
                                 <span className="info-label">Prime de performance</span>
-                                <span className="info-value">{formatMontant(employee.prime_performance)}</span>
+                                <span className="info-value">{formatMontant(displayEmployee.prime_performance)}</span>
                               </div>
                             )}
-                            {employee.prime_astreinte > 0 && (
+                            {displayEmployee.prime_astreinte > 0 && (
                               <div className="info-item">
                                 <span className="info-label">Prime d'astreinte</span>
-                                <span className="info-value">{formatMontant(employee.prime_astreinte)}</span>
+                                <span className="info-value">{formatMontant(displayEmployee.prime_astreinte)}</span>
                               </div>
                             )}
                           </div>
@@ -787,10 +806,10 @@ Email: ${employee.email}
                       <div className="info-item">
                         <span className="info-label">Email</span>
                         <span className="info-value">
-                          {employee.email ? (
-                            <a href={`mailto:${employee.email}`} className="contact-link">
+                          {displayEmployee.email ? (
+                            <a href={`mailto:${displayEmployee.email}`} className="contact-link">
                               <i className="fas fa-envelope me-1"></i>
-                              {employee.email}
+                              {displayEmployee.email}
                             </a>
                           ) : 'Non spécifié'}
                         </span>
@@ -798,10 +817,10 @@ Email: ${employee.email}
                       <div className="info-item">
                         <span className="info-label">Téléphone</span>
                         <span className="info-value">
-                          {employee.telephone ? (
-                            <a href={`tel:${employee.telephone}`} className="contact-link">
+                          {displayEmployee.telephone ? (
+                            <a href={`tel:${displayEmployee.telephone}`} className="contact-link">
                               <i className="fas fa-phone me-1"></i>
-                              {employee.telephone}
+                              {displayEmployee.telephone}
                             </a>
                           ) : 'Non spécifié'}
                         </span>
@@ -809,29 +828,29 @@ Email: ${employee.email}
                       <div className="info-item">
                         <span className="info-label">Adresse</span>
                         <span className="info-value">
-                          {employee.adresse ? (
+                          {displayEmployee.adresse ? (
                             <>
                               <i className="fas fa-map-marker-alt me-1"></i>
-                              {employee.adresse}
+                              {displayEmployee.adresse}
                             </>
                           ) : 'Non spécifié'}
                         </span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Lieu</span>
-                        <span className="info-value">{employee.lieu || 'Non spécifié'}</span>
+                        <span className="info-value">{displayEmployee.lieu || 'Non spécifié'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Contact d'urgence</span>
-                        <span className="info-value">{employee.emergency_contact || 'Non spécifié'}</span>
+                        <span className="info-value">{displayEmployee.emergency_contact || displayEmployee.contact_urgence || 'Non spécifié'}</span>
                       </div>
                       <div className="info-item">
                         <span className="info-label">Téléphone d'urgence</span>
                         <span className="info-value">
-                          {employee.emergency_phone ? (
-                            <a href={`tel:${employee.emergency_phone}`} className="contact-link">
+                          {(displayEmployee.emergency_phone || displayEmployee.telephone_urgence) ? (
+                            <a href={`tel:${displayEmployee.emergency_phone || displayEmployee.telephone_urgence}`} className="contact-link">
                               <i className="fas fa-phone me-1"></i>
-                              {employee.emergency_phone}
+                              {displayEmployee.emergency_phone || displayEmployee.telephone_urgence}
                             </a>
                           ) : 'Non spécifié'}
                         </span>
@@ -854,15 +873,15 @@ Email: ${employee.email}
                         <div className="info-grid">
                           <div className="info-item">
                             <span className="info-label">Numéro CNSS</span>
-                            <span className="info-value">{employee.cnss_number || 'Non spécifié'}</span>
+                            <span className="info-value">{displayEmployee.cnss_number || 'Non spécifié'}</span>
                           </div>
                           <div className="info-item">
                             <span className="info-label">Numéro CNAMGS</span>
-                            <span className="info-value">{employee.cnamgs_number || 'Non spécifié'}</span>
+                            <span className="info-value">{displayEmployee.cnamgs_number || 'Non spécifié'}</span>
                           </div>
                           <div className="info-item">
                             <span className="info-label">ID TimeMoto</span>
-                            <span className="info-value">{employee.timemoto_id || 'Non spécifié'}</span>
+                            <span className="info-value">{displayEmployee.timemoto_id || 'Non spécifié'}</span>
                           </div>
                         </div>
                       </div>
@@ -997,7 +1016,7 @@ Email: ${employee.email}
               <button 
                 type="button" 
                 className="btn btn-primary me-2"
-                onClick={() => onEdit(employee)}
+                onClick={() => onEdit(displayEmployee)}
               >
                 <i className="fas fa-edit me-1"></i>
                 Modifier
