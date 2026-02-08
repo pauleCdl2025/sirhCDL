@@ -423,19 +423,16 @@ const LeaveManagement = () => {
       setIsLoading(true);
       setError(null);
       
+      const listConge = conges.find(c => c.id === id || c.id === parseInt(id, 10));
       let conge;
+      
       try {
-        conge = await congeService.getById(id);
+        const apiConge = await congeService.getById(id);
+        // Fusionner: données de la liste en base, API complète/met à jour (évite champs vides si API incomplet)
+        conge = listConge ? { ...listConge, ...apiConge } : apiConge;
       } catch (apiError) {
-        // Fallback: utiliser les données de la liste si l'API getById échoue
-        conge = conges.find(c => c.id === id || c.id === parseInt(id, 10));
-        if (conge) {
-          setSelectedConge(conge);
-          setShowDetailsModal(true);
-        } else {
-          throw apiError;
-        }
-        return;
+        conge = listConge;
+        if (!conge) throw apiError;
       }
       
       setSelectedConge(conge);
@@ -579,9 +576,9 @@ const LeaveManagement = () => {
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       result = result.filter(conge => 
-        conge.nom_employe.toLowerCase().includes(searchLower) ||
+        (conge.nom_employe || '').toLowerCase().includes(searchLower) ||
         conge.service?.toLowerCase().includes(searchLower) ||
-        conge.type_conge.toLowerCase().includes(searchLower)
+        (conge.type_conge || '').toLowerCase().includes(searchLower)
       );
     }
     
@@ -786,11 +783,11 @@ const LeaveManagement = () => {
                             width: '30px', 
                             height: '30px', 
                             fontSize: '0.75rem',
-                            backgroundColor: `hsl(${conge.nom_employe.length * 15}, 70%, 50%)` 
+                            backgroundColor: `hsl(${(conge.nom_employe || '').length * 15}, 70%, 50%)` 
                           }}>
-                            {getInitials(conge.nom_employe)}
+                            {getInitials(conge.nom_employe || '')}
                           </div>
-                          {conge.nom_employe}
+                          {conge.nom_employe || '-'}
                         </div>
                       </td>
                       <td>{conge.service || '-'}</td>
