@@ -38,13 +38,14 @@ api.interceptors.response.use(
       data: error.response?.data
     });
 
-    // Handle 401 Unauthorized errors
-    if (error.response && error.response.status === 401) {
-      // Clear session storage
+    // Handle 401 Unauthorized - déconnexion uniquement si on utilise le token utilisateur
+    // (pas la clé anon Supabase, sinon une 401 Edge Function déconnecte à tort)
+    const isSupabase = error.config?.baseURL?.includes?.('supabase.co');
+    const usedAnonKey = isSupabase && process.env.REACT_APP_SUPABASE_ANON_KEY;
+
+    if (error.response && error.response.status === 401 && !usedAnonKey) {
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('user');
-      
-      // Redirect to login page
       window.location.href = '/login';
     }
     return Promise.reject(error);
