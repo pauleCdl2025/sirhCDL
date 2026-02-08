@@ -380,11 +380,13 @@ const MedicalVisits = () => {
     try {
       setIsLoading(true);
       setError(null);
+      const listVisite = visites.find(v => v.id === visite.id || v.id === parseInt(visite.id, 10)) || visite;
       let visiteDetails;
       try {
-        visiteDetails = await visiteMedicaleService.getById(visite.id);
+        const apiVisite = await visiteMedicaleService.getById(visite.id);
+        visiteDetails = { ...listVisite, ...apiVisite };
       } catch (apiError) {
-        visiteDetails = visites.find(v => v.id === visite.id || v.id === parseInt(visite.id, 10));
+        visiteDetails = listVisite;
         if (!visiteDetails) throw apiError;
       }
       setSelectedVisite(visiteDetails);
@@ -1156,12 +1158,12 @@ const MedicalVisits = () => {
             <div className="modal-body">
               <div className="text-center mb-4">
                 <div className="avatar-circle avatar-lg mx-auto mb-2" style={{
-                  backgroundColor: `hsl(${(selectedVisite.nom?.charCodeAt(0) || 0) * 10}, 70%, 60%)`,
+                  backgroundColor: `hsl(${((selectedVisite.nom || '').charCodeAt(0) || 0) * 10}, 70%, 60%)`,
                 }}>
-                  {selectedVisite.nom?.charAt(0)}{selectedVisite.prenom?.charAt(0)}
+                  {(selectedVisite.nom || '').charAt(0)}{(selectedVisite.prenom || '').charAt(0)}
                 </div>
-                <h4>{selectedVisite.nom} {selectedVisite.prenom}</h4>
-                <p className="text-muted mb-0">{selectedVisite.poste}</p>
+                <h4>{selectedVisite.nom || '-'} {selectedVisite.prenom || ''}</h4>
+                <p className="text-muted mb-0">{selectedVisite.poste || '-'}</p>
               </div>
               
               <div className="row mb-4">

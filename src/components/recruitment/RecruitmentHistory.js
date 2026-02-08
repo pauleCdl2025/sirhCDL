@@ -255,11 +255,13 @@ const RecruitmentHistory = () => {
     try {
       setIsLoading(true);
       setError(null);
+      const listRecruitment = recruitments.find(r => r.id === id || r.id === parseInt(id, 10));
       let recruitment;
       try {
-        recruitment = await recrutementService.getById(id);
+        const apiRecruitment = await recrutementService.getById(id);
+        recruitment = listRecruitment ? { ...listRecruitment, ...apiRecruitment } : apiRecruitment;
       } catch (apiError) {
-        recruitment = recruitments.find(r => r.id === id || r.id === parseInt(id, 10));
+        recruitment = listRecruitment;
         if (!recruitment) throw apiError;
       }
       setSelectedRecruitment(recruitment);
@@ -277,11 +279,13 @@ const RecruitmentHistory = () => {
     try {
       setIsLoading(true);
       setError(null);
+      const listRecruitment = recruitments.find(r => r.id === id || r.id === parseInt(id, 10));
       let recruitment;
       try {
-        recruitment = await recrutementService.getById(id);
+        const apiRecruitment = await recrutementService.getById(id);
+        recruitment = listRecruitment ? { ...listRecruitment, ...apiRecruitment } : apiRecruitment;
       } catch (apiError) {
-        recruitment = recruitments.find(r => r.id === id || r.id === parseInt(id, 10));
+        recruitment = listRecruitment;
         if (!recruitment) throw apiError;
       }
       setSelectedRecruitment(recruitment);
@@ -1158,7 +1162,7 @@ const RecruitmentHistory = () => {
               <div className="row mb-4">
                 <div className="col-md-12 text-center mb-3">
                   <span className={`badge bg-${getStatusBadgeColor(selectedRecruitment.status)} fs-6 px-4 py-2`}>
-                    {selectedRecruitment.status}
+                    {selectedRecruitment.status || '-'}
                   </span>
                 </div>
                 <div className="col-md-6">
@@ -1218,7 +1222,7 @@ const RecruitmentHistory = () => {
                       <div className="list-group-item d-flex justify-content-between align-items-center">
                         <div>
                           <i className="far fa-file-pdf text-danger me-2"></i>
-                          CV_{selectedRecruitment.fullName.replace(/\s+/g, '_')}.pdf
+                          CV_{(selectedRecruitment.fullName || selectedRecruitment.nom || 'document').replace(/\s+/g, '_')}.pdf
                         </div>
                         <div>
                           <button 

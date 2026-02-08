@@ -489,9 +489,9 @@ const EventManagement = () => {
                       </td>
                       <td>{event.organizer || 'Non spécifié'}</td>
                       <td>
-                        {event.description.length > 50
-                          ? `${event.description.substring(0, 50)}...`
-                          : event.description}
+                        {(event.description || '').length > 50
+                          ? `${(event.description || '').substring(0, 50)}...`
+                          : (event.description || '-')}
                       </td>
                       <td>
                         <div className="d-flex justify-content-end gap-2">

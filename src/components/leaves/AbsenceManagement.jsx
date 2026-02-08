@@ -270,19 +270,15 @@ const AbsenceManagement = () => {
       setIsLoading(true);
       setError(null);
       
+      const listAbsence = absences.find(a => a.id === id || a.id === parseInt(id, 10));
       let absence;
+      
       try {
-        absence = await absenceService.getById(id);
+        const apiAbsence = await absenceService.getById(id);
+        absence = listAbsence ? { ...listAbsence, ...apiAbsence } : apiAbsence;
       } catch (apiError) {
-        // Fallback: utiliser les données de la liste si l'API getById échoue
-        absence = absences.find(a => a.id === id || a.id === parseInt(id, 10));
-        if (absence) {
-          setSelectedAbsence(absence);
-          setShowDetailsModal(true);
-        } else {
-          throw apiError;
-        }
-        return;
+        absence = listAbsence;
+        if (!absence) throw apiError;
       }
       
       setSelectedAbsence(absence);
@@ -561,10 +557,10 @@ const AbsenceManagement = () => {
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       result = result.filter(absence => 
-        absence.nom_employe.toLowerCase().includes(searchLower) ||
-        absence.service?.toLowerCase().includes(searchLower) ||
-        absence.motif?.toLowerCase().includes(searchLower) ||
-        absence.type_absence?.toLowerCase().includes(searchLower)
+        (absence.nom_employe || '').toLowerCase().includes(searchLower) ||
+        (absence.service || '').toLowerCase().includes(searchLower) ||
+        (absence.motif || '').toLowerCase().includes(searchLower) ||
+        (absence.type_absence || '').toLowerCase().includes(searchLower)
       );
     }
     
@@ -842,7 +838,7 @@ const AbsenceManagement = () => {
                             width: 30, 
                             height: 30, 
                             fontSize: '0.75rem',
-                            backgroundColor: `hsl(${absence.nom_employe.length * 15}, 70%, 50%)` 
+                            backgroundColor: `hsl(${(absence.nom_employe || '').length * 15}, 70%, 50%)` 
                           }}>
                             {getInitials(absence.nom_employe)}
                           </div>
@@ -852,9 +848,9 @@ const AbsenceManagement = () => {
                       <td>{absence.service || '-'}</td>
                       <td>
                         {getAbsenceTypeIcon(absence.type_absence)}
-                        {absence.type_absence}
+                        {absence.type_absence || '-'}
                       </td>
-                      <td>{absence.motif}</td>
+                      <td>{absence.motif || '-'}</td>
                       <td>{formatDate(absence.date_debut)}</td>
                       <td>{formatDate(absence.date_fin)}</td>
                       <td>
@@ -1195,11 +1191,11 @@ const AbsenceManagement = () => {
                           width: 30, 
                           height: 30, 
                           fontSize: '0.75rem',
-                          backgroundColor: `hsl(${selectedAbsence.nom_employe.length * 15}, 70%, 50%)` 
+                          backgroundColor: `hsl(${(selectedAbsence.nom_employe || '').length * 15}, 70%, 50%)` 
                         }}>
-                          {getInitials(selectedAbsence.nom_employe)}
+                          {getInitials(selectedAbsence.nom_employe || '')}
                         </div>
-                        <span className="fw-bold">{selectedAbsence.nom_employe}</span>
+                        <span className="fw-bold">{selectedAbsence.nom_employe || '-'}</span>
                       </div>
                     </div>
                   </div>
@@ -1224,7 +1220,7 @@ const AbsenceManagement = () => {
                   
                   <div className="info-group mb-3">
                     <div className="info-label">Motif :</div>
-                    <div className="info-value">{selectedAbsence.motif}</div>
+                    <div className="info-value">{selectedAbsence.motif || '-'}</div>
                   </div>
                 </div>
                 
@@ -1265,7 +1261,7 @@ const AbsenceManagement = () => {
                     <div className="info-label">Statut :</div>
                     <div className="info-value">
                       <span className={`badge ${getStatusBadgeClass(selectedAbsence.statut)}`}>
-                        {selectedAbsence.statut}
+                        {selectedAbsence.statut || '-'}
                       </span>
                     </div>
                   </div>

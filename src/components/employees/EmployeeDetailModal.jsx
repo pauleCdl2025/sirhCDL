@@ -19,7 +19,10 @@ const EmployeeDetailModal = ({ employee, onClose, onEdit, onPrint }) => {
       try {
         if (employeeService?.getById) {
           const full = await employeeService.getById(employee.id);
-          if (full && typeof full === 'object' && !full.error) setDisplayEmployee(full);
+          // Fusionner liste + API pour éviter champs vides si API incomplet
+          if (full && typeof full === 'object' && !full.error) {
+            setDisplayEmployee(prev => ({ ...employee, ...prev, ...full }));
+          }
         }
       } catch (err) {
         console.warn('Détails employé non chargés, utilisation des données liste:', err);

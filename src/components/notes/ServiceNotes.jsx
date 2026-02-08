@@ -88,8 +88,16 @@ const ServiceNotes = () => {
   };
 
   // Handle view note details
-  const handleViewDetails = (id) => {
-    const note = notes.find(n => n.id === id);
+  const handleViewDetails = async (id) => {
+    const listNote = notes.find(n => n.id === id || n.id === parseInt(id, 10));
+    let note;
+    try {
+      const apiNote = await noteService.getById(id);
+      note = listNote ? { ...listNote, ...apiNote } : apiNote;
+    } catch (apiError) {
+      note = listNote;
+      if (!note) throw apiError;
+    }
     setSelectedNote(note);
     setShowViewModal(true);
   };
@@ -421,7 +429,7 @@ const ServiceNotes = () => {
             </div>
             <div className="modal-body">
               <div className="mb-3">
-                <h4 className="note-view-title">{selectedNote.title}</h4>
+                <h4 className="note-view-title">{selectedNote.title || '-'}</h4>
                 <div className="note-view-meta">
                   <span className={`badge bg-${getCategoryBadgeColor(selectedNote.category)} me-2`}>
                     {selectedNote.category}
@@ -439,7 +447,7 @@ const ServiceNotes = () => {
               </div>
               
               <div className="note-view-content">
-                {selectedNote.content.split('\n').map((paragraph, i) => (
+                {(selectedNote.content || '').split('\n').map((paragraph, i) => (
                   <p key={i}>{paragraph}</p>
                 ))}
               </div>

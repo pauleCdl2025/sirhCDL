@@ -341,11 +341,13 @@ const DepartureHistory = () => {
   const handleViewDeparture = async (id) => {
     try {
       setErrorMessage(null);
+      const listDeparture = departures.find(d => d.id === id || d.id === parseInt(id, 10));
       let departure;
       try {
-        departure = await departService.getById(id);
+        const apiDeparture = await departService.getById(id);
+        departure = listDeparture ? { ...listDeparture, ...apiDeparture } : apiDeparture;
       } catch (apiError) {
-        departure = departures.find(d => d.id === id || d.id === parseInt(id, 10));
+        departure = listDeparture;
         if (!departure) throw apiError;
       }
       setSelectedDeparture(departure);
@@ -388,7 +390,7 @@ const DepartureHistory = () => {
     setIsSubmitting(true);
     try {
       await departService.delete(departureToDelete.id);
-      showTemporaryMessage(`Le départ de ${departureToDelete.nom} ${departureToDelete.prenom} a été supprimé avec succès`);
+      showTemporaryMessage(`Le départ de ${departureToDelete.nom || ''} ${departureToDelete.prenom || ''} a été supprimé avec succès`);
       
       // Fermer les modals et rafraîchir
       setShowConfirmDeleteModal(false);
@@ -1204,12 +1206,12 @@ const DepartureHistory = () => {
             <div className="modal-body">
               <div className="text-center mb-4">
                 <div className="avatar-circle avatar-lg mx-auto mb-3" style={{
-                  backgroundColor: `hsl(${(selectedDeparture.nom.charCodeAt(0) || 0) * 10}, 70%, 60%)`,
+                  backgroundColor: `hsl(${((selectedDeparture.nom || '').charCodeAt(0) || 0) * 10}, 70%, 60%)`,
                 }}>
-                  {selectedDeparture.nom.charAt(0)}{selectedDeparture.prenom.charAt(0)}
+                  {(selectedDeparture.nom || '').charAt(0)}{(selectedDeparture.prenom || '').charAt(0)}
                 </div>
-                <h4 className="mb-0">{selectedDeparture.nom} {selectedDeparture.prenom}</h4>
-                <p className="text-muted">{selectedDeparture.poste}</p>
+                <h4 className="mb-0">{selectedDeparture.nom || '-'} {selectedDeparture.prenom || ''}</h4>
+                <p className="text-muted">{selectedDeparture.poste || '-'}</p>
                 <span className={`badge ${getDepartureReasonBadgeClass(selectedDeparture.motif_depart)} px-3 py-2`}>
                   {selectedDeparture.motif_depart || 'Non spécifié'}
                 </span>
