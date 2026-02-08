@@ -1,4 +1,5 @@
 // Edge Function Supabase - Historique recrutements
+// Utilise historique_recrutement (nom, prenom, poste...) pour l'affichage des candidatures
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -13,9 +14,19 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders });
   try {
     const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "", { auth: { persistSession: false } });
-    const { data, error } = await supabase.from("recrutement_history").select("*").order("id", { ascending: false });
+    const { data, error } = await supabase.from("historique_recrutement").select("*").order("id", { ascending: false });
     if (error) throw error;
-    return new Response(JSON.stringify(data || []), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const mapped = (data || []).map((r) => ({
+      id: r.id,
+      fullName: `${(r.nom || "").trim()} ${(r.prenom || "").trim()}`.trim(),
+      position: r.poste,
+      department: r.departement,
+      source: r.motif_recrutement,
+      applicationDate: r.date_recrutement,
+      status: r.type_contrat,
+      ...r,
+    }));
+    return new Response(JSON.stringify(mapped), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (err) {
     console.error(err);
     return new Response(JSON.stringify({ error: String(err) }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });

@@ -264,7 +264,7 @@ Email: ${employee.email}
                 <img src={employee.photo} alt={decodeHtmlEntities(employee.nom_prenom)} />
               ) : (
                 <div className="avatar-placeholder">
-                  {decodeHtmlEntities(employee.nom_prenom).split(' ').slice(0, 2).map(name => name.charAt(0)).join('').toUpperCase()}
+                  {((decodeHtmlEntities(employee?.nom_prenom) ?? '').split(' ').slice(0, 2).map(name => name?.charAt(0) || '').join('').toUpperCase()) || '?'}
                 </div>
               )}
             </div>

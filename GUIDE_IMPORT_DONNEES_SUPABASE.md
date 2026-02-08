@@ -99,3 +99,13 @@ Vérifiez que vous utilisez `sslmode=require` ou l'option SSL dans votre client.
 
 ### Erreur d'encodage
 Le fichier est en UTF-8. Assurez-vous que votre client utilise UTF-8.
+
+### Problèmes d'accents (é, è, ê affichés incorrectement)
+
+Les fichiers `rh_portail_DATA_ONLY.sql`, `rh_portail_INSERT.sql` et `rh_portail.sql` ont été corrigés : les accents français s'affichent maintenant correctement (Cérémonie, Arrêt, Infirmière, etc.).
+
+**Si votre base Supabase contient déjà des données avec des accents incorrects** (ex. : C‚r‚monie au lieu de Cérémonie) :
+
+1. Ouvrez **Supabase Dashboard** > **SQL Editor**
+2. Copiez et exécutez le script `supabase/database/fix_accents_supabase.sql`
+3. Cela corrige les tables : absence, conges, employees, contrats, sanctions_table, notes, historique_recrutement, recrutement_history, historique_departs, visites_medicales

@@ -28,7 +28,7 @@ CREATE FUNCTION public.clean_string(text) RETURNS text
     LANGUAGE plpgsql
     AS $_$
 BEGIN
-    -- Remplacer les caractŠres probl‚matiques ou les convertir
+    -- Remplacer les caractères problématiques ou les convertir
     RETURN regexp_replace($1, '[^\x20-\x7E\xA0-\xFF]', '', 'g');
 END;
 $_$;
@@ -333,7 +333,7 @@ CREATE TABLE public.conges (
     jours_pris integer,
     jours_restants integer,
     date_prochaine_attribution date,
-    type_conge character varying(50) DEFAULT 'Cong‚ pay‚'::character varying,
+    type_conge character varying(50) DEFAULT 'Congé payé'::character varying,
     statut character varying(20) DEFAULT 'En attente'::character varying,
     date_traitement timestamp without time zone,
     document_path character varying(255)
