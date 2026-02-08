@@ -21,7 +21,13 @@ const EmployeeDetailModal = ({ employee, onClose, onEdit, onPrint }) => {
           const full = await employeeService.getById(employee.id);
           // Fusionner liste + API pour éviter champs vides si API incomplet
           if (full && typeof full === 'object' && !full.error) {
-            setDisplayEmployee(prev => ({ ...employee, ...prev, ...full }));
+            const merged = { ...employee, ...full };
+            // Fallbacks pour noms de champs alternatifs (DB peut avoir statut vs statut_dossier, etc.)
+            merged.nom_prenom = merged.nom_prenom || merged.nom || '';
+            merged.poste_actuel = merged.poste_actuel || merged.poste || '';
+            merged.statut_dossier = merged.statut_dossier || merged.statut || '';
+            merged.payment_mode = merged.payment_mode || merged.mode_paiement || '';
+            setDisplayEmployee(prev => ({ ...employee, ...prev, ...merged }));
           }
         }
       } catch (err) {
@@ -286,16 +292,16 @@ Email: ${displayEmployee.email}
           <div className="employee-header">
             <div className="employee-avatar">
               {displayEmployee.photo ? (
-                <img src={displayEmployee.photo} alt={decodeHtmlEntities(displayEmployee.nom_prenom)} />
+                <img src={displayEmployee.photo} alt={decodeHtmlEntities(displayEmployee.nom_prenom || employee?.nom_prenom || '')} />
               ) : (
                 <div className="avatar-placeholder">
-                  {((decodeHtmlEntities(employee?.nom_prenom) ?? '').split(' ').slice(0, 2).map(name => name?.charAt(0) || '').join('').toUpperCase()) || '?'}
+                  {((decodeHtmlEntities(displayEmployee.nom_prenom || employee?.nom_prenom || '') || '').split(' ').slice(0, 2).map(name => name?.charAt(0) || '').join('').toUpperCase()) || '?'}
                 </div>
               )}
             </div>
             <div className="employee-main-info">
-              <h4 className="employee-name">{decodeHtmlEntities(displayEmployee.nom_prenom)}</h4>
-              <p className="employee-position">{decodeHtmlEntities(displayEmployee.poste_actuel) || 'Non spécifié'}</p>
+              <h4 className="employee-name">{decodeHtmlEntities(displayEmployee.nom_prenom || employee?.nom_prenom || '') || 'Non spécifié'}</h4>
+              <p className="employee-position">{decodeHtmlEntities(displayEmployee.poste_actuel || displayEmployee.poste || '') || 'Non spécifié'}</p>
               <div className="employee-meta">
                 <span className={`badge contract-badge ${displayEmployee.type_contrat === 'CDI' ? 'bg-success' : displayEmployee.type_contrat === 'CDD' ? 'bg-warning text-dark' : 'bg-info'}`}>
                   {decodeHtmlEntities(displayEmployee.type_contrat) || 'Non spécifié'}

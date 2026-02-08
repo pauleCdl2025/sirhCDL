@@ -241,18 +241,25 @@ const EmployeeList = () => {
     try {
       let detailedEmployee = employee;
       
-      // Try to fetch complete employee details if the API is available
+      // Fusionner données liste + API (éviter champs vides si API incomplet)
       if (employeeService && typeof employeeService.getById === 'function') {
         try {
-          detailedEmployee = await employeeService.getById(employee.id);
-          detailedEmployee.nom_prenom = decodeHtmlEntities(detailedEmployee.nom_prenom);
-          detailedEmployee.poste_actuel = decodeHtmlEntities(detailedEmployee.poste_actuel);
-          detailedEmployee.entity = decodeHtmlEntities(detailedEmployee.entity);
+          const apiEmployee = await employeeService.getById(employee.id);
+          detailedEmployee = apiEmployee && !apiEmployee.error
+            ? { ...employee, ...apiEmployee }
+            : employee;
         } catch (apiError) {
-          console.error('API error when fetching employee details, using current data:', apiError);
-          // Continue with the current employee data
+          console.error('API error when fetching employee details, using list data:', apiError);
         }
       }
+      
+      // Décoder les entités HTML
+      detailedEmployee = {
+        ...detailedEmployee,
+        nom_prenom: decodeHtmlEntities(detailedEmployee.nom_prenom || detailedEmployee.nom || ''),
+        poste_actuel: decodeHtmlEntities(detailedEmployee.poste_actuel || detailedEmployee.poste || ''),
+        entity: decodeHtmlEntities(detailedEmployee.entity || '')
+      };
       
       setSelectedEmployee(detailedEmployee);
       setShowDetailModal(true);
