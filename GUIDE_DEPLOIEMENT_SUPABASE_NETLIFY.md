@@ -5,14 +5,15 @@ Ce guide vous accompagne pour utiliser **Supabase** comme base de données et d�
 ## Architecture de déploiement
 
 ```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│  Netlify        │     │  Backend (Render  │     │  Supabase       │
-│  (Frontend      │────▶│  ou Railway)      │────▶│  (PostgreSQL)   │
-│  React)         │     │  API Express     │     │  Base de données│
-└─────────────────┘     └──────────────────┘     └─────────────────┘
+┌─────────────────┐     ┌──────────────────────────────────┐
+│  Netlify        │     │  Supabase Cloud                  │
+│  (Frontend      │────▶│  - Edge Functions (auth + data)  │
+│  React)         │     │  - PostgreSQL (base de données)  │
+└─────────────────┘     └──────────────────────────────────┘
 ```
 
-> **Important** : Netlify héberge uniquement les sites statiques. Votre backend Express doit être déployé séparément (Render, Railway, Fly.io, etc.).
+- **Tout le backend** (auth + données) est hébergé sur Supabase (Edge Functions).
+- Voir `GUIDE_BACKEND_SUPABASE_EDGE_FUNCTIONS.md` pour le déploiement des Edge Functions.
 
 ---
 
@@ -58,41 +59,29 @@ node scripts/migrate-to-supabase.js
 
 ---
 
-## Partie 2 : Déployer le Backend (Render ou Railway)
+## Partie 2 : Déployer les Edge Functions Supabase
 
-Le backend Express doit être hébergé séparément. **Render** propose un plan gratuit adapté.
+Le backend est hébergé sur Supabase sous forme d'Edge Functions.
 
-### 2.1 Déployer sur Render
+### 2.1 Déployer les fonctions
 
-1. Créez un compte sur [render.com](https://render.com)
-2. **New** > **Web Service**
-3. Connectez votre dépôt Git
-4. Configuration :
-   - **Build Command** : `cd backend && npm install`
-   - **Start Command** : `cd backend && node server.js`
-   - **Root Directory** : laisser vide ou `backend`
+```bash
+supabase functions deploy auth-login
+supabase functions deploy evenements
+supabase functions deploy requests
 
-5. **Environment Variables** (à ajouter) :
-   ```
-   NODE_ENV=production
-   DB_HOST=db.votre-projet.supabase.co
-   DB_PORT=5432
-   DB_NAME=postgres
-   DB_USER=postgres
-   DB_PASSWORD=votre_mot_de_passe_supabase
-   SUPABASE_URL=https://votre-projet.supabase.co
-   FRONTEND_URL=https://votre-site.netlify.app
-   JWT_SECRET=votre_secret_jwt_long_et_aleatoire
-   ```
+supabase functions deploy employees l’URL supabase functions deploy employees
+```
+### 2.2 Configurer les secrets (Dashboard Supabase)
 
-6. Sauvegardez et déployez. Notez l’URL du service (ex : `https://votre-api.onrender.com`)
+**Project Settings** > **Edge Functions** > **Secrets** :
+- `SUPABASE_URL` : URL du projet
+- `SUPABASE_SERVICE_ROLE_KEY` : Clé service role (Settings > API)
+- `JWT_SECRET` : Secret pour les tokens JWT
 
-### 2.2 Alternative : Railway
+Voir `GUIDE_BACKEND_SUPABASE_EDGE_FUNCTIONS.md` pour plus de détails.
 
-1. [railway.app](https://railway.app) > **New Project** > **Deploy from GitHub**
-2. Sélectionnez le dépôt et le dossier `backend`
-3. Ajoutez les mêmes variables d’environnement que ci-dessus
-4. Railway génère automatiquement une URL publique
+3. (supprimé) d’environnement que ci-dessus
 
 ---
 
@@ -100,13 +89,9 @@ Le backend Express doit être hébergé séparément. **Render** propose un plan
 
 ### 3.1 Préparer le projet
 
-Créez un fichier `.env.production` à la racine du projet (ne pas commiter) :
+Les variables d'environnement se configurent dans Netlify (voir section 3.2, pas de fichier `.env` à commiter).
 
-```env
-REACT_APP_API_URL=https://votre-api.onrender.com/api
-```
-
-Ou utilisez les variables d’environnement directement dans Netlify.
+Configurez les variables dans Netlify (voir section 3.2). d’environnement directement dans Netlify.
 
 ### 3.2 Déploiement via Netlify
 
@@ -121,9 +106,13 @@ Ou utilisez les variables d’environnement directement dans Netlify.
 
 5. **Environment variables** (Site settings > Environment variables) :
    ```
-   REACT_APP_API_URL = https://votre-api.onrender.com/api
+   REACT_APP_API_URL = https://dwpkqdiunxbgumepkveb.supabase.co/functions/v1
+   REACT_APP_SUPABASE_ANON_KEY = <votre clé anon Supabase>
    NODE_VERSION = 18
    ```
+   
+   - `REACT_APP_API_URL` : URL des Edge Functions Supabase (auth + données)
+   - `REACT_APP_SUPABASE_ANON_KEY` : Clé anonyme Supabase (Settings > API)
 
 6. Cliquez sur **Deploy site**
 
@@ -134,22 +123,57 @@ Ou utilisez les variables d’environnement directement dans Netlify.
 
 ---
 
+## LA SUITE : Checklist de déploiement
+
+Exécutez ces étapes dans l'ordre :
+
+### Étape 1 – Déployer les Edge Functions
+
+```bash
+cd c:\Users\surface\Desktop\sirhCDL
+supabase login
+supabase link --project-ref dwpkqdiunxbgumepkveb
+supabase functions deploy auth-login
+supabase functions deploy evenements
+supabase functions deploy requests
+supabase functions deploy employees
+```
+
+### Étape 2 – Configurer les secrets Supabase
+
+Dashboard Supabase > **Project Settings** > **Edge Functions** > **Secrets** :
+
+| Secret | Valeur |
+|--------|--------|
+| `SUPABASE_URL` | `https://dwpkqdiunxbgumepkveb.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clé **service_role** (Settings > API) |
+| `JWT_SECRET` | Une chaîne aléatoire longue (ex. 32 caractères) |
+
+### Étape 3 – Variables Netlify
+
+Netlify > **Site settings** > **Environment variables** > **Add variable** :
+
+| Variable | Valeur |
+|----------|--------|
+| `REACT_APP_API_URL` | `https://dwpkqdiunxbgumepkveb.supabase.co/functions/v1` |
+| `REACT_APP_SUPABASE_ANON_KEY` | Clé **anon** (Settings > API) |
+| `NODE_VERSION` | `18` |
+
+### Étape 4 – Redéployer le site Netlify
+
+Options > **Trigger deploy** > **Deploy site** (ou pousser un commit sur la branche liée).
+
+### Étape 5 – Tester
+
+1. Ouvrir https://sirhcdl0.netlify.app
+2. Se connecter avec `rh@centre-diagnostic.com` / `Rh@2025CDL`
+3. Vérifier le dashboard, la liste des employés, les événements
+
+---
+
 ## Partie 4 : Configuration finale
 
-### 4.1 Mettre à jour CORS du backend
-
-Une fois le site Netlify créé, ajoutez son URL dans les variables du backend :
-
-```
-FRONTEND_URL=https://votre-site.netlify.app
-```
-
-Ou pour les prévisualisations :
-```
-NETLIFY_URL=https://*.netlify.app
-```
-
-### 4.2 Vérifier la connexion
+### 4.1 Vérifier la connexion
 
 1. Ouvrez votre site Netlify
 2. Connectez-vous avec vos identifiants
@@ -162,21 +186,17 @@ NETLIFY_URL=https://*.netlify.app
 ### Netlify (Frontend)
 | Variable | Valeur |
 |---------|--------|
-| `REACT_APP_API_URL` | URL de votre backend (ex: `https://xxx.onrender.com/api`) |
+| `REACT_APP_API_URL` | `https://dwpkqdiunxbgumepkveb.supabase.co/functions/v1` |
+| `REACT_APP_SUPABASE_ANON_KEY` | Clé anon Supabase |
 | `NODE_VERSION` | 18 |
 
-### Backend (Render/Railway)
+> **Important** : Le backend est entièrement sur Supabase. Déployez les Edge Functions (auth-login, evenements, requests, employees) avant de tester.
+
+### Edge Functions (Secrets Supabase)
 | Variable | Valeur |
 |---------|--------|
-| `NODE_ENV` | production |
-| `DB_HOST` | db.dwpkqdiunxbgumepkveb.supabase.co |
-| `DB_PORT` | 5432 |
-| `DB_NAME` | postgres |
-| `DB_USER` | postgres |
-| `DB_PASSWORD` | Mot de passe Supabase |
 | `SUPABASE_URL` | https://dwpkqdiunxbgumepkveb.supabase.co |
-| `SUPABASE_ANON_KEY` | sb_publishable_VKZReniDd61V10U-E8-v4A_aNbAk2kh |
-| `FRONTEND_URL` | https://votre-site.netlify.app |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clé service role (Settings > API) |
 | `JWT_SECRET` | Secret pour les tokens JWT |
 
 ### Développement local avec Supabase
@@ -194,9 +214,11 @@ Copiez `backend/config.env.example` vers `backend/.env` et remplissez les valeur
 - Vérifiez les variables `DB_*` dans le backend
 - Supabase requiert une connexion SSL (déjà gérée dans le code)
 
-### Les données ne s'affichent pas
-- Vérifiez que `REACT_APP_API_URL` pointe vers le bon backend
-- Les variables `REACT_APP_*` doivent être définies au moment du build
+### Les données ne s'affichent pas / Erreurs CORS sur evenements, employees, requests
+- **Cause** : Les Edge Functions ne sont pas déployées.
+- **Solution** : Déployez les Edge Functions (`supabase functions deploy evenements requests employees`).
+- Vérifiez que `REACT_APP_API_URL` = `https://xxx.supabase.co/functions/v1` (sans `/api`).
+- Les variables `REACT_APP_*` doivent être définies au moment du build Netlify.
 
 ---
 

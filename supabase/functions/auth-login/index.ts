@@ -7,7 +7,9 @@ import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Authorization, Content-Type, x-client-info, apikey",
+  "Access-Control-Max-Age": "86400",
 };
 
 // Identifiants de test (fallback)
@@ -37,8 +39,9 @@ async function verifyPassword(password: string, hash: string): Promise<boolean> 
 }
 
 serve(async (req) => {
+  // Réponse CORS pour préflight (OPTIONS) - doit être en premier
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
 
   try {

@@ -1,22 +1,28 @@
 import axios from 'axios';
 
-// URL de base de l'API
-const API_URL = 'http://localhost:5000/api';
+// URL de base de l'API (alignée sur apiConfig pour le déploiement)
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const isSupabase = API_URL?.includes?.('supabase.co');
+
+const defaultHeaders = {
+  'Content-Type': 'application/json',
+  ...(isSupabase && SUPABASE_ANON_KEY && { Authorization: `Bearer ${SUPABASE_ANON_KEY}` }),
+};
 
 // Instance axios avec la configuration de base
 const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  headers: defaultHeaders,
 });
 
 // Pour les requêtes multipart/form-data (envoi de fichiers)
 const formDataApi = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'multipart/form-data'
-  }
+    'Content-Type': 'multipart/form-data',
+    ...(isSupabase && SUPABASE_ANON_KEY && { Authorization: `Bearer ${SUPABASE_ANON_KEY}` }),
+  },
 });
 
 // Gestion des erreurs

@@ -110,14 +110,13 @@ const ContractAlerts = () => {
         
         const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
         const token = sessionStorage.getItem('token');
-        
+        const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+        const isSupabase = baseURL?.includes?.('supabase.co');
+
         const headers = {
           'Content-Type': 'application/json',
+          ...(isSupabase && supabaseAnonKey ? { Authorization: `Bearer ${supabaseAnonKey}` } : token ? { Authorization: `Bearer ${token}` } : {}),
         };
-        
-        if (token) {
-          headers.Authorization = `Bearer ${token}`;
-        }
         
         const response = await axios.get(`${baseURL}/employees/alerts/expiring-contracts`, {
           params: { daysThreshold: 60 },

@@ -9,11 +9,16 @@ const api = axios.create({
   timeout: API_CONFIG.DEFAULT_TIMEOUT,
 });
 
-// Add a request interceptor to add auth token
+// Add a request interceptor to add auth token or Supabase anon key
 api.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem('token');
-    if (token) {
+    const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+    const isSupabase = config.baseURL?.includes?.('supabase.co');
+
+    if (isSupabase && supabaseAnonKey) {
+      config.headers.Authorization = `Bearer ${supabaseAnonKey}`;
+    } else if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

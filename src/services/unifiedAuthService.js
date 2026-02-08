@@ -2,16 +2,14 @@ import axios from 'axios';
 import { employeeService } from './api';
 import adminAuthService from './adminAuthService';
 
+// Auth : Supabase Edge Functions ou backend Express
 const API_BASE_URL = process.env.REACT_APP_API_URL || process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
 const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const USE_SUPABASE = Boolean(SUPABASE_ANON_KEY && API_BASE_URL?.includes('supabase.co'));
 
-// Endpoint auth : Supabase Edge Function ou backend Express
-const AUTH_ENDPOINT = USE_SUPABASE ? '/auth-login' : '/auth/login';
-
-// Instance axios pour les requêtes d'authentification
+// Instance axios pour l'authentification
 const authApi = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: USE_SUPABASE ? API_BASE_URL : (API_BASE_URL.endsWith('/api') ? API_BASE_URL : API_BASE_URL + '/api'),
   headers: {
     'Content-Type': 'application/json',
     ...(USE_SUPABASE && SUPABASE_ANON_KEY && {
@@ -88,7 +86,7 @@ class UnifiedAuthService {
       // Les identifiants de test sont gérés côté backend
       try {
         console.log('🚀 Appel API /auth/login pour enregistrer dans login_history');
-        const response = await authApi.post(AUTH_ENDPOINT, {
+        const response = await authApi.post(USE_SUPABASE ? '/auth-login' : '/auth/login', {
           email: email.trim(),
           password: password
         });
