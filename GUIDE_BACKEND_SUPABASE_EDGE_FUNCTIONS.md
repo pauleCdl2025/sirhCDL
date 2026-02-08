@@ -22,6 +22,18 @@ Tout le backend (auth + données) est hébergé sur Supabase.
 | `evenements`   | `/functions/v1/evenements`  | Événements (liste, upcoming)          |
 | `requests`     | `/functions/v1/requests`    | Demandes employés (count/pending, etc.)|
 | `employees`    | `/functions/v1/employees`   | Employés (liste, expiring-contracts)  |
+| `conges`       | `/functions/v1/conges`      | Congés                                |
+| `absences`     | `/functions/v1/absences`    | Absences                              |
+| `contrats`     | `/functions/v1/contrats`    | Contrats                              |
+| `notes`        | `/functions/v1/notes`       | Notes de service (/, /public)         |
+| `sanctions`    | `/functions/v1/sanctions`   | Sanctions                             |
+| `recrutements` | `/functions/v1/recrutements`| Historique recrutements               |
+| `departs`      | `/functions/v1/departs`     | Historique départs                    |
+| `visites-medicales` | `/functions/v1/visites-medicales` | Visites médicales          |
+| `interviews`   | `/functions/v1/interviews`  | Entretiens                            |
+| `tasks`        | `/functions/v1/tasks`       | Tâches (/, /stats/overview)           |
+| `performance`  | `/functions/v1/performance` | Performance                           |
+| `departments`  | `/functions/v1/departments`  | Départements                          |
 
 ## Déployer les Edge Functions
 
@@ -41,6 +53,18 @@ supabase functions deploy auth-login
 supabase functions deploy evenements --no-verify-jwt
 supabase functions deploy requests --no-verify-jwt
 supabase functions deploy employees --no-verify-jwt
+supabase functions deploy conges --no-verify-jwt
+supabase functions deploy absences --no-verify-jwt
+supabase functions deploy contrats --no-verify-jwt
+supabase functions deploy notes --no-verify-jwt
+supabase functions deploy sanctions --no-verify-jwt
+supabase functions deploy recrutements --no-verify-jwt
+supabase functions deploy departs --no-verify-jwt
+supabase functions deploy visites-medicales --no-verify-jwt
+supabase functions deploy interviews --no-verify-jwt
+supabase functions deploy tasks --no-verify-jwt
+supabase functions deploy performance --no-verify-jwt
+supabase functions deploy departments --no-verify-jwt
 ```
 
 > **Important** : `--no-verify-jwt` est requis pour les fonctions de données (evenements, requests, employees) car la clé `sb_publishable_` n’est pas un JWT et provoque des 401 sans cela.

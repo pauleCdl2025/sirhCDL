@@ -38,15 +38,15 @@ serve(async (req) => {
     const segments = getPathSegments(req.url);
 
     if (req.method === "GET" && segments[0] === "count" && segments[1] === "pending") {
-      const { count, error } = await supabase
+      const { data, error } = await supabase
         .from("employee_requests")
-        .select("*", { count: "exact", head: true })
+        .select("id")
         .eq("status", "pending");
 
       if (error) throw error;
       return new Response(
         JSON.stringify({
-          pendingCount: count ?? 0,
+          pendingCount: data?.length ?? 0,
           timestamp: new Date().toISOString(),
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -54,26 +54,24 @@ serve(async (req) => {
     }
 
     if (req.method === "GET" && segments.length === 0) {
-      const { data, error } = await supabase
+      const { data: requests, error } = await supabase
         .from("employee_requests")
-        .select(`
-          *,
-          employees (nom_prenom, poste_actuel, entity, email)
-        `)
+        .select("*")
         .order("request_date", { ascending: false });
 
       if (error) throw error;
-      const rows = (data || []).map((r: Record<string, unknown>) => {
-        const emp = r.employees as Record<string, unknown> | null;
-        return {
-          ...r,
-          nom_prenom: emp?.nom_prenom ?? null,
-          poste_actuel: emp?.poste_actuel ?? null,
-          entity: emp?.entity ?? null,
-          email: emp?.email ?? null,
-        };
+      const rows = requests || [];
+      const ids = [...new Set(rows.map((r: Record<string, unknown>) => r.employee_id).filter(Boolean))];
+      const empMap: Record<number, Record<string, unknown>> = {};
+      if (ids.length > 0) {
+        const { data: emps } = await supabase.from("employees").select("id, nom_prenom, poste_actuel, entity, email").in("id", ids);
+        (emps || []).forEach((e: Record<string, unknown>) => { empMap[Number(e.id)] = e; });
+      }
+      const result = rows.map((r: Record<string, unknown>) => {
+        const emp = empMap[Number(r.employee_id)];
+        return { ...r, nom_prenom: emp?.nom_prenom ?? null, poste_actuel: emp?.poste_actuel ?? null, entity: emp?.entity ?? null, email: emp?.email ?? null };
       });
-      return new Response(JSON.stringify(rows), {
+      return new Response(JSON.stringify(result), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -81,36 +79,29 @@ serve(async (req) => {
     if (req.method === "GET" && segments[0] === "employee" && segments[1]) {
       const { data, error } = await supabase
         .from("employee_requests")
-        .select(`
-          *,
-          employees (nom_prenom, poste_actuel, entity, email)
-        `)
+        .select("*")
         .eq("employee_id", parseInt(segments[1], 10))
         .order("request_date", { ascending: false });
 
       if (error) throw error;
-      const rows = (data || []).map((r: Record<string, unknown>) => {
-        const emp = r.employees as Record<string, unknown> | null;
-        return {
-          ...r,
-          nom_prenom: emp?.nom_prenom ?? null,
-          poste_actuel: emp?.poste_actuel ?? null,
-          entity: emp?.entity ?? null,
-          email: emp?.email ?? null,
-        };
+      const rows = (data || []) as Record<string, unknown>[];
+      const ids = [...new Set(rows.map((r) => r.employee_id).filter(Boolean))];
+      const empMap: Record<number, Record<string, unknown>> = {};
+      if (ids.length > 0) {
+        const { data: emps } = await supabase.from("employees").select("id, nom_prenom, poste_actuel, entity, email").in("id", ids);
+        (emps || []).forEach((e: Record<string, unknown>) => { empMap[Number(e.id)] = e; });
+      }
+      const result = rows.map((r) => {
+        const emp = empMap[Number(r.employee_id)];
+        return { ...r, nom_prenom: emp?.nom_prenom ?? null, poste_actuel: emp?.poste_actuel ?? null, entity: emp?.entity ?? null, email: emp?.email ?? null };
       });
-      return new Response(JSON.stringify(rows), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(JSON.stringify(result), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     if (req.method === "GET" && segments[0] && /^\d+$/.test(segments[0])) {
       const { data, error } = await supabase
         .from("employee_requests")
-        .select(`
-          *,
-          employees (nom_prenom, poste_actuel, entity, email)
-        `)
+        .select("*")
         .eq("id", parseInt(segments[0], 10))
         .single();
 
@@ -120,17 +111,10 @@ serve(async (req) => {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const emp = (data as Record<string, unknown>).employees as Record<string, unknown> | null;
-      const result = {
-        ...data,
-        nom_prenom: emp?.nom_prenom ?? null,
-        poste_actuel: emp?.poste_actuel ?? null,
-        entity: emp?.entity ?? null,
-        email: emp?.email ?? null,
-      };
-      return new Response(JSON.stringify(result), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      const d = data as Record<string, unknown>;
+      const { data: emp } = await supabase.from("employees").select("nom_prenom, poste_actuel, entity, email").eq("id", d.employee_id).single();
+      const result = { ...d, nom_prenom: emp?.nom_prenom ?? null, poste_actuel: emp?.poste_actuel ?? null, entity: emp?.entity ?? null, email: emp?.email ?? null };
+      return new Response(JSON.stringify(result), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     return new Response(JSON.stringify({ error: "Not found" }), {
