@@ -38,10 +38,12 @@ cd sirhCDL
 
 # Déployer toutes les fonctions
 supabase functions deploy auth-login
-supabase functions deploy evenements
-supabase functions deploy requests
-supabase functions deploy employees
+supabase functions deploy evenements --no-verify-jwt
+supabase functions deploy requests --no-verify-jwt
+supabase functions deploy employees --no-verify-jwt
 ```
+
+> **Important** : `--no-verify-jwt` est requis pour les fonctions de données (evenements, requests, employees) car la clé `sb_publishable_` n’est pas un JWT et provoque des 401 sans cela.
 
 ### Variables d'environnement (Supabase Dashboard)
 
@@ -62,14 +64,11 @@ Dans **Site settings** > **Environment variables** :
 
 > **Important** : `REACT_APP_API_URL` doit pointer vers `/functions/v1` **sans** `/api` à la fin.
 
-## Désactiver la vérification JWT (optionnel)
+## Désactiver la vérification JWT (obligatoire avec clé sb_publishable_)
 
-Pour que les Edge Functions acceptent les requêtes avec la clé anon :
+La clé `sb_publishable_` n’est pas un JWT, donc les Edge Functions renvoient 401 sans `--no-verify-jwt` au déploiement.
 
-1. Supabase Dashboard > **Project Settings** > **Edge Functions**
-2. Désactiver **Enforce JWT verification** pour les fonctions publiques
-
-Ou laisser activé et s'assurer que le frontend envoie bien `Authorization: Bearer <anon_key>`.
+**Solution** : déployer avec `--no-verify-jwt` pour evenements, requests, employees.
 
 ## Ajouter d'autres endpoints
 

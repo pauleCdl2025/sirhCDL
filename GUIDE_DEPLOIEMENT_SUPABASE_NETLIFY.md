@@ -134,9 +134,9 @@ cd c:\Users\surface\Desktop\sirhCDL
 supabase login
 supabase link --project-ref dwpkqdiunxbgumepkveb
 supabase functions deploy auth-login
-supabase functions deploy evenements
-supabase functions deploy requests
-supabase functions deploy employees
+supabase functions deploy evenements --no-verify-jwt
+supabase functions deploy requests --no-verify-jwt
+supabase functions deploy employees --no-verify-jwt
 ```
 
 ### Étape 2 – Configurer les secrets Supabase
