@@ -29,6 +29,13 @@ serve(async (req) => {
       const stats = { total: rows.length, completed: rows.filter((t: Record<string, unknown>) => t.status === "completed" || t.statut === "Terminé").length, pending: rows.filter((t: Record<string, unknown>) => t.status === "pending" || t.statut === "En cours").length };
       return new Response(JSON.stringify(stats), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    if (segments[0] && /^\d+$/.test(segments[0])) {
+      const { data, error } = await supabase.from("tasks").select("*").eq("id", parseInt(segments[0], 10)).single();
+      if (error || !data) {
+        return new Response(JSON.stringify({ error: "Task not found" }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      return new Response(JSON.stringify(data), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     const { data, error } = await supabase.from("tasks").select("*").order("id", { ascending: false });
     if (error) throw error;
     return new Response(JSON.stringify(data || []), { headers: { ...corsHeaders, "Content-Type": "application/json" } });

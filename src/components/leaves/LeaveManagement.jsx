@@ -302,7 +302,13 @@ const LeaveManagement = () => {
   // Ouvrir le modal de modification
   const openEditModal = async (id) => {
     try {
-      const conge = await congeService.getById(id);
+      let conge;
+      try {
+        conge = await congeService.getById(id);
+      } catch (apiError) {
+        conge = conges.find(c => c.id === id || c.id === parseInt(id, 10));
+        if (!conge) throw apiError;
+      }
       setEditingConge(conge);
       setShowEditModal(true);
     } catch (error) {
@@ -415,13 +421,29 @@ const LeaveManagement = () => {
   const handleViewDetails = async (id) => {
     try {
       setIsLoading(true);
-      const conge = await congeService.getById(id);
+      setError(null);
+      
+      let conge;
+      try {
+        conge = await congeService.getById(id);
+      } catch (apiError) {
+        // Fallback: utiliser les données de la liste si l'API getById échoue
+        conge = conges.find(c => c.id === id || c.id === parseInt(id, 10));
+        if (conge) {
+          setSelectedConge(conge);
+          setShowDetailsModal(true);
+        } else {
+          throw apiError;
+        }
+        return;
+      }
+      
       setSelectedConge(conge);
       setShowDetailsModal(true);
-      setIsLoading(false);
     } catch (error) {
       console.error('Erreur lors de la récupération des détails du congé:', error);
       setError('Une erreur est survenue lors de la récupération des détails du congé.');
+    } finally {
       setIsLoading(false);
     }
   };

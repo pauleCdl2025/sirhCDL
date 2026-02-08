@@ -254,7 +254,14 @@ const RecruitmentHistory = () => {
   const handleViewDetails = async (id) => {
     try {
       setIsLoading(true);
-      const recruitment = await recrutementService.getById(id);
+      setError(null);
+      let recruitment;
+      try {
+        recruitment = await recrutementService.getById(id);
+      } catch (apiError) {
+        recruitment = recruitments.find(r => r.id === id || r.id === parseInt(id, 10));
+        if (!recruitment) throw apiError;
+      }
       setSelectedRecruitment(recruitment);
       setShowViewModal(true);
     } catch (error) {
@@ -269,7 +276,14 @@ const RecruitmentHistory = () => {
   const handleEditRecruitment = async (id) => {
     try {
       setIsLoading(true);
-      const recruitment = await recrutementService.getById(id);
+      setError(null);
+      let recruitment;
+      try {
+        recruitment = await recrutementService.getById(id);
+      } catch (apiError) {
+        recruitment = recruitments.find(r => r.id === id || r.id === parseInt(id, 10));
+        if (!recruitment) throw apiError;
+      }
       setSelectedRecruitment(recruitment);
       setShowEditModal(true);
     } catch (error) {

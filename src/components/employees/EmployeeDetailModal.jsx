@@ -11,16 +11,19 @@ const EmployeeDetailModal = ({ employee, onClose, onEdit, onPrint }) => {
 
   // Charger les données complètes de l'employé à l'ouverture du modal
   useEffect(() => {
-    if (!employee?.id) return;
-    setDisplayEmployee(employee);
+    if (!employee || typeof employee !== 'object') return;
+    // Toujours afficher les données de base immédiatement
+    setDisplayEmployee({ ...employee });
+    if (!employee.id) return;
     const fetchFull = async () => {
       try {
         if (employeeService?.getById) {
           const full = await employeeService.getById(employee.id);
-          if (full && typeof full === 'object') setDisplayEmployee(full);
+          if (full && typeof full === 'object' && !full.error) setDisplayEmployee(full);
         }
       } catch (err) {
         console.warn('Détails employé non chargés, utilisation des données liste:', err);
+        setDisplayEmployee(prev => ({ ...employee, ...prev }));
       }
     };
     fetchFull();

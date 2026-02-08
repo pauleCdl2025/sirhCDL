@@ -236,17 +236,19 @@ const AbsenceManagement = () => {
   const handleEditAbsence = async (id) => {
     try {
       setIsLoading(true);
+      setError(null);
       
-      // Fetch the absence details
-      const absence = await absenceService.getById(id);
+      let absence;
+      try {
+        absence = await absenceService.getById(id);
+      } catch (apiError) {
+        absence = absences.find(a => a.id === id || a.id === parseInt(id, 10));
+        if (!absence) throw apiError;
+      }
       
-      // Check if the motif is in our predefined list
       const isKnownMotif = motifs.includes(absence.motif);
-      
-      // If not, set it as "Autre" and store the custom motif
       if (!isKnownMotif) {
-        absence.other_motif = absence.motif;
-        absence.motif = 'Autre';
+        absence = { ...absence, other_motif: absence.motif, motif: 'Autre' };
         setOtherMotifVisible(true);
       } else {
         setOtherMotifVisible(false);
@@ -266,9 +268,23 @@ const AbsenceManagement = () => {
   const handleViewDetails = async (id) => {
     try {
       setIsLoading(true);
+      setError(null);
       
-      // Fetch the absence details
-      const absence = await absenceService.getById(id);
+      let absence;
+      try {
+        absence = await absenceService.getById(id);
+      } catch (apiError) {
+        // Fallback: utiliser les données de la liste si l'API getById échoue
+        absence = absences.find(a => a.id === id || a.id === parseInt(id, 10));
+        if (absence) {
+          setSelectedAbsence(absence);
+          setShowDetailsModal(true);
+        } else {
+          throw apiError;
+        }
+        return;
+      }
+      
       setSelectedAbsence(absence);
       setShowDetailsModal(true);
     } catch (error) {

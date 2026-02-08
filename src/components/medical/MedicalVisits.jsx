@@ -379,9 +379,14 @@ const MedicalVisits = () => {
   const handleViewVisite = useCallback(async (visite) => {
     try {
       setIsLoading(true);
-      
-      // Fetch the latest data for this visite
-      const visiteDetails = await visiteMedicaleService.getById(visite.id);
+      setError(null);
+      let visiteDetails;
+      try {
+        visiteDetails = await visiteMedicaleService.getById(visite.id);
+      } catch (apiError) {
+        visiteDetails = visites.find(v => v.id === visite.id || v.id === parseInt(visite.id, 10));
+        if (!visiteDetails) throw apiError;
+      }
       setSelectedVisite(visiteDetails);
       setShowViewModal(true);
     } catch (err) {
@@ -390,7 +395,7 @@ const MedicalVisits = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [visites]);
 
   // Handle updating visite status
   const handleShowUpdateModal = useCallback((visite) => {

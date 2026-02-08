@@ -340,7 +340,14 @@ const DepartureHistory = () => {
   // Afficher les détails d'un départ
   const handleViewDeparture = async (id) => {
     try {
-      const departure = await departService.getById(id);
+      setErrorMessage(null);
+      let departure;
+      try {
+        departure = await departService.getById(id);
+      } catch (apiError) {
+        departure = departures.find(d => d.id === id || d.id === parseInt(id, 10));
+        if (!departure) throw apiError;
+      }
       setSelectedDeparture(departure);
       setShowViewModal(true);
     } catch (error) {
@@ -352,7 +359,14 @@ const DepartureHistory = () => {
   // Afficher le formulaire d'édition
   const handleEditDeparture = async (id) => {
     try {
-      const departure = await departService.getById(id);
+      setErrorMessage(null);
+      let departure;
+      try {
+        departure = await departService.getById(id);
+      } catch (apiError) {
+        departure = departures.find(d => d.id === id || d.id === parseInt(id, 10));
+        if (!departure) throw apiError;
+      }
       setSelectedDeparture(departure);
       setShowEditModal(true);
     } catch (error) {
