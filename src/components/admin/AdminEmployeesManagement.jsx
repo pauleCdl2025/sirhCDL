@@ -276,7 +276,7 @@ const AdminEmployeesManagement = () => {
                         <button
                           className="btn-icon btn-edit"
                           title="Modifier"
-                          onClick={() => navigate(`/edit-employee/${employee.id}`)}
+                          onClick={() => navigate(`/edit-employee/${employee.id}`, { state: { employee } })}
                         >
                           <FaEdit />
                         </button>

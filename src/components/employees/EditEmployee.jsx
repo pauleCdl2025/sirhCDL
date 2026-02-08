@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import employeeService from '../../services/employeeService';
 import '../../styles/EditEmployee.css';
 
 const EditEmployee = () => {
     const navigate = useNavigate();
     const { id } = useParams();
+    const location = useLocation();
+    const listEmployee = location.state?.employee;
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     
@@ -150,107 +152,106 @@ const EditEmployee = () => {
         }
     }, [employeeData.date_embauche]);
 
-    // Charger les données de l'employé
+    // Mapper les données employé vers le formulaire
+    const mapEmployeeToFormData = (emp) => {
+        if (!emp || typeof emp !== 'object') return null;
+        const e = { ...emp };
+        return {
+            matricule: e.matricule || '',
+            genre: e.genre || 'Homme',
+            noms: e.nom_prenom || e.nom || '',
+            situation_maritale: e.statut_marital || 'Célibataire',
+            statut_marital: e.statut_marital || 'Célibataire',
+            nbr_enfants: e.enfants ?? 0,
+            enfants: e.enfants ?? 0,
+            date_naissance: e.date_naissance ? (e.date_naissance.split?.('T')[0] || e.date_naissance.split?.(' ')[0] || e.date_naissance) : '',
+            age: e.age || '',
+            lieu: e.lieu_naissance || e.lieu || '',
+            lieu_naissance: e.lieu_naissance || e.lieu || '',
+            adresse: e.adresse || '',
+            telephone: e.telephone || '',
+            email: e.email || '',
+            cnss_number: e.cnss_number || '',
+            cnamgs_number: e.cnamgs_number || '',
+            domaine_fonctionnel: e.functional_area || '',
+            functional_area: e.functional_area || '',
+            entity: e.entity || '',
+            departement: e.departement || '',
+            date_embauche: e.date_entree ? (e.date_entree.split?.('T')[0] || e.date_entree.split?.(' ')[0] || e.date_entree) : '',
+            date_entree: e.date_entree ? (e.date_entree.split?.('T')[0] || e.date_entree.split?.(' ')[0] || e.date_entree) : '',
+            poste_actuel: e.poste_actuel || e.poste || '',
+            attachement_hierarchique: e.responsable || '',
+            responsable: e.responsable || '',
+            type_contrat: e.type_contrat || '',
+            categorie: e.categorie || '',
+            date_fin_contrat: e.date_fin_contrat ? (e.date_fin_contrat.split?.('T')[0] || e.date_fin_contrat.split?.(' ')[0] || e.date_fin_contrat) : '',
+            statut_local_expat: e.employee_type || '',
+            employee_type: e.employee_type || '',
+            pays: e.nationalite || 'Gabon',
+            nationalite: e.nationalite || 'Gabon',
+            niveau_academique: e.niveau_etude || '',
+            niveau_etude: e.niveau_etude || '',
+            diplome: e.specialisation || '',
+            specialisation: e.specialisation || '',
+            anciennete_entreprise: e.anciennete || '0 ans 0 mois',
+            statut_employe: e.statut_employe || e.statut || 'Actif',
+            statut_dossier: e.statut_dossier || 'NON SPÉCIFIÉ',
+            admission_retraite_dans: e.admission_retraite_dans || (e.age_restant ? `${e.age_restant} ans` : ''),
+            date_depart_retraite: e.date_depart_retraite || (e.date_retraite ? (e.date_retraite.split?.('T')[0] || e.date_retraite.split?.(' ')[0] || e.date_retraite) : ''),
+            pay: e.type_remuneration || 'Salaire',
+            type_remuneration: e.type_remuneration || 'Salaire',
+            payment_mode: e.payment_mode || e.mode_paiement || '',
+            categorie_convention: e.categorie_convention || '',
+            salaire_base: e.salaire_base ?? 0,
+            sursalaire: e.sursalaire ?? 0,
+            prime_responsabilite: e.prime_responsabilite ?? 0,
+            transport: e.prime_transport ?? 35000,
+            prime_transport: e.prime_transport ?? 35000,
+            logement: e.prime_logement ?? 0,
+            prime_logement: e.prime_logement ?? 0,
+            prime_assiduite: e.prime_assiduite ?? 0,
+            primes_diverses: e.primes_diverses ?? 0,
+            panier: e.panier ?? 0,
+            prime_ca: e.prime_ca ?? 0,
+            ind_caisse: e.ind_caisse ?? 0,
+            ind_domesticite: e.ind_domesticite ?? 0,
+            ind_eau_electricite: e.ind_eau_electricite ?? 0,
+            ind_voiture: e.ind_voiture ?? 0,
+            prime_salissure: e.prime_salissure ?? 0,
+            honoraires: e.honoraires ?? 0,
+            ind_stage: e.ind_stage ?? e.indemnite_stage ?? 0,
+            emergency_contact: e.emergency_contact || e.contact_urgence || '',
+            emergency_phone: e.emergency_phone || e.telephone_urgence || ''
+        };
+    };
+
+    // Pré-remplir immédiatement avec les données de la liste (si passées)
+    useEffect(() => {
+        if (listEmployee && id && String(listEmployee.id) === String(id)) {
+            const mapped = mapEmployeeToFormData(listEmployee);
+            if (mapped) setEmployeeData(mapped);
+        }
+    }, [id, listEmployee]);
+
+    // Charger les données complètes de l'employé via l'API
     useEffect(() => {
         const loadEmployee = async () => {
             try {
                 setLoading(true);
-                const employee = await employeeService.getById(id);
-                if (employee) {
-                    // Mapper les données de la base vers le formulaire
-                    const mappedData = {
-                        // Informations générales
-                        matricule: employee.matricule || '',
-                        genre: employee.genre || 'Homme',
-                        noms: employee.nom_prenom || '',
-                        situation_maritale: employee.statut_marital || 'Célibataire',
-                        statut_marital: employee.statut_marital || 'Célibataire',
-                        nbr_enfants: employee.enfants || 0,
-                        enfants: employee.enfants || 0,
-                        date_naissance: employee.date_naissance ? employee.date_naissance.split('T')[0] : '',
-                        age: employee.age || '',
-                        lieu: employee.lieu_naissance || employee.lieu || '',
-                        lieu_naissance: employee.lieu_naissance || employee.lieu || '',
-
-                        // Coordonnées
-                        adresse: employee.adresse || '',
-                        telephone: employee.telephone || '',
-                        email: employee.email || '',
-                        cnss_number: employee.cnss_number || '',
-                        cnamgs_number: employee.cnamgs_number || '',
-
-                        // Informations professionnelles
-                        domaine_fonctionnel: employee.functional_area || '',
-                        functional_area: employee.functional_area || '',
-                        entity: employee.entity || '',
-                        departement: employee.departement || '',
-                        date_embauche: employee.date_entree ? (employee.date_entree.split('T')[0] || employee.date_entree.split(' ')[0]) : '',
-                        date_entree: employee.date_entree ? (employee.date_entree.split('T')[0] || employee.date_entree.split(' ')[0]) : '',
-                        poste_actuel: employee.poste_actuel || '',
-                        attachement_hierarchique: employee.responsable || '',
-                        responsable: employee.responsable || '',
-                        type_contrat: employee.type_contrat || '',
-                        categorie: employee.categorie || '',
-                        date_fin_contrat: employee.date_fin_contrat ? (employee.date_fin_contrat.split('T')[0] || employee.date_fin_contrat.split(' ')[0]) : '',
-                        statut_local_expat: employee.employee_type || '',
-                        employee_type: employee.employee_type || '',
-                        pays: employee.nationalite || 'Gabon',
-                        nationalite: employee.nationalite || 'Gabon',
-                        niveau_academique: employee.niveau_etude || '',
-                        niveau_etude: employee.niveau_etude || '',
-                        diplome: employee.specialisation || '',
-                        specialisation: employee.specialisation || '',
-                        anciennete_entreprise: employee.anciennete || '0 ans 0 mois',
-                        statut_employe: employee.statut_employe || employee.statut || 'Actif',
-                        statut_dossier: employee.statut_dossier || 'NON SPÉCIFIÉ',
-
-                        // Informations de retraite
-                        admission_retraite_dans: employee.admission_retraite_dans || employee.age_restant ? `${employee.age_restant} ans` : '',
-                        date_depart_retraite: employee.date_depart_retraite || (employee.date_retraite ? (employee.date_retraite.split('T')[0] || employee.date_retraite.split(' ')[0]) : ''),
-
-                        // Rémunération
-                        pay: employee.type_remuneration || 'Salaire',
-                        type_remuneration: employee.type_remuneration || 'Salaire',
-                        payment_mode: employee.payment_mode || '',
-                        categorie_convention: employee.categorie_convention || '',
-                        salaire_base: employee.salaire_base || 0,
-                        sursalaire: employee.sursalaire || 0,
-                        prime_responsabilite: employee.prime_responsabilite || 0,
-                        transport: employee.prime_transport || 35000,
-                        prime_transport: employee.prime_transport || 35000,
-                        logement: employee.prime_logement || 0,
-                        prime_logement: employee.prime_logement || 0,
-
-                        // Éléments de rémunération avancés
-                        prime_assiduite: employee.prime_assiduite || 0,
-                        primes_diverses: employee.primes_diverses || 0,
-                        panier: employee.panier || 0,
-                        prime_ca: employee.prime_ca || 0,
-                        ind_caisse: employee.ind_caisse || 0,
-                        ind_domesticite: employee.ind_domesticite || 0,
-                        ind_eau_electricite: employee.ind_eau_electricite || 0,
-                        ind_voiture: employee.ind_voiture || 0,
-                        prime_salissure: employee.prime_salissure || 0,
-                        honoraires: employee.honoraires || 0,
-                        ind_stage: employee.ind_stage || 0,
-
-                        // Contacts d'urgence
-                        emergency_contact: employee.emergency_contact || '',
-                        emergency_phone: employee.emergency_phone || ''
-                    };
-                    setEmployeeData(mappedData);
+                const apiEmployee = await employeeService.getById(id);
+                if (apiEmployee && !apiEmployee.error) {
+                    const merged = mapEmployeeToFormData({ ...listEmployee, ...apiEmployee });
+                    if (merged) setEmployeeData(merged);
                 }
             } catch (err) {
                 console.error('Error loading employee:', err);
-                setError('Erreur lors du chargement des données de l\'employé');
+                if (!listEmployee) setError('Erreur lors du chargement des données de l\'employé');
             } finally {
                 setLoading(false);
             }
         };
 
-        if (id) {
-            loadEmployee();
-        }
+        if (id) loadEmployee();
     }, [id]);
 
     const handleInputChange = (e) => {

@@ -273,7 +273,7 @@ const EmployeeList = () => {
 
   // Handle edit employee - Navigate to edit page
   const handleEditEmployee = (employee) => {
-    navigate(`/edit-employee/${employee.id}`);
+    navigate(`/edit-employee/${employee.id}`, { state: { employee } });
   };
 
   // Handle delete employee
@@ -600,7 +600,7 @@ const EmployeeList = () => {
           onClose={() => setShowDetailModal(false)}
           onEdit={() => {
             setShowDetailModal(false);
-            navigate(`/edit-employee/${selectedEmployee.id}`);
+            navigate(`/edit-employee/${selectedEmployee.id}`, { state: { employee: selectedEmployee } });
           }}
         />
       )}
