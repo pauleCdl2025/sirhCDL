@@ -1,0 +1,125 @@
+/* Employee Request Portal Styles */
+
+/* Employee information */
+.employee-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-primary);
+    color: var(--white);
+    font-weight: 600;
+    font-size: 1.3rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .info-label {
+    color: var(--secondary);
+    width: 110px;
+  }
+  
+  .info-value {
+    flex: 1;
+  }
+  
+  /* Request types */
+  .request-types {
+    margin-top: 1.5rem;
+  }
+  
+  .request-type-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
+    cursor: pointer;
+    text-align: center;
+    height: 100%;
+    border: 2px solid transparent;
+  }
+  
+  .request-type-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .request-type-card.active {
+    border-color: var(--primary);
+    background-color: var(--primary-light);
+  }
+  
+  .request-type-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+  }
+  
+  .document-icon {
+    background: linear-gradient(135deg, #ffdd57, #ff7730);
+    color: white;
+  }
+  
+  .leave-icon {
+    background: linear-gradient(135deg, #3a7bd5, #00d1b2);
+    color: white;
+  }
+  
+  .absence-icon {
+    background: linear-gradient(135deg, #ff3860, #ff5252);
+    color: white;
+  }
+  
+  .request-type-card h6 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+  }
+  
+  .request-type-card p {
+    font-size: 0.875rem;
+    color: var(--secondary);
+    margin-bottom: 0;
+  }
+  
+  .request-type-card.active h6 {
+    color: var(--primary);
+  }
+  
+  /* Request history section */
+  .request-detail-label {
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0.25rem;
+  }
+  
+  .request-detail-value {
+    margin-bottom: 1rem;
+  }
+  
+  .comments-section {
+    background-color: var(--gray-light);
+    padding: 15px;
+    border-radius: var(--radius-sm);
+    margin-top: 15px;
+  }
+  
+  .comment-header {
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .request-type-card {
+      margin-bottom: 1rem;
+    }
+  }

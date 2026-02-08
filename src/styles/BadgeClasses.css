@@ -1,0 +1,37 @@
+/* Badge styles for the absence management */
+.badge {
+    display: inline-block;
+    padding: 0.4em 0.65em;
+    font-size: 0.75em;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 30px;
+  }
+  
+  .badge-pending {
+    color: #ff9f43;
+    background-color: rgba(255, 159, 67, 0.15);
+  }
+  
+  .badge-approved {
+    color: var(--success);
+    background-color: rgba(0, 209, 178, 0.15);
+  }
+  
+  .badge-rejected {
+    color: var(--danger);
+    background-color: rgba(255, 56, 96, 0.15);
+  }
+  
+  .badge-remunerated {
+    color: var(--success);
+    background-color: rgba(0, 209, 178, 0.15);
+  }
+  
+  .badge-not-remunerated {
+    color: var(--danger);
+    background-color: rgba(255, 56, 96, 0.15);
+  }

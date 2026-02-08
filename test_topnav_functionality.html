@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test TopNav Fonctionnalité</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3a7bd5;
+            --primary-dark: #2c5aa0;
+            --primary-light: rgba(58, 123, 213, 0.1);
+            --white: #ffffff;
+            --gray: #6c757d;
+            --gray-light: #f8f9fa;
+            --dark: #343a40;
+            --danger: #dc3545;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #3298dc;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
+            --transition-base: all 0.3s ease;
+            --topbar-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gray-light);
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .test-title {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .test-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .test-section {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .test-section-title {
+            padding: 15px 20px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .test-content {
+            padding: 20px;
+        }
+
+        .test-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 8px;
+            background: var(--gray-light);
+        }
+
+        .test-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .test-item-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .test-item-description {
+            font-size: 0.875rem;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .test-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: var(--transition-base);
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .test-button.primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .test-button.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .test-button.success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .test-button.success:hover {
+            background: #218838;
+        }
+
+        .test-button.warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        .test-button.warning:hover {
+            background: #e0a800;
+        }
+
+        .test-button.danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .test-button.danger:hover {
+            background: #c82333;
+        }
+
+        .status-panel {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .status-value.success {
+            color: var(--success);
+        }
+
+        .status-value.error {
+            color: var(--danger);
+        }
+
+        .status-value.warning {
+            color: var(--warning);
+        }
+
+        .instructions {
+            background: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .instructions h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1 class="test-title">🧪 Test TopNav Fonctionnalité</h1>
+            <p class="test-description">Vérification que tous les boutons de la TopNav fonctionnent correctement</p>
+        </div>
+
+        <div class="instructions">
+            <h4>📋 Instructions de Test</h4>
+            <ol>
+                <li><strong>Connectez-vous</strong> avec les identifiants de test : rh@centre-diagnostic.com / Rh@2025CDL</li>
+                <li><strong>Testez chaque bouton</strong> de la TopNav pour vérifier qu'ils fonctionnent</li>
+                <li><strong>Vérifiez les dropdowns</strong> s'ouvrent et se ferment correctement</li>
+                <li><strong>Testez la recherche</strong> avec des termes comme "Jean" ou "contrat"</li>
+                <li><strong>Vérifiez la déconnexion</strong> fonctionne correctement</li>
+            </ol>
+        </div>
+
+        <div class="status-panel">
+            <h3>📊 État des Fonctionnalités</h3>
+            <div class="status-item">
+                <span>Authentification :</span>
+                <span class="status-value" id="authStatus">Non testé</span>
+            </div>
+            <div class="status-item">
+                <span>Recherche :</span>
+                <span class="status-value" id="searchStatus">Non testé</span>
+            </div>
+            <div class="status-item">
+                <span>Notifications :</span>
+                <span class="status-value" id="notificationStatus">Non testé</span>
+            </div>
+            <div class="status-item">
+                <span>Messagerie :</span>
+                <span class="status-value" id="messageStatus">Non testé</span>
+            </div>
+            <div class="status-item">
+                <span>Menu Utilisateur :</span>
+                <span class="status-value" id="userStatus">Non testé</span>
+            </div>
+            <div class="status-item">
+                <span>Déconnexion :</span>
+                <span class="status-value" id="logoutStatus">Non testé</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-section-title">
+                <i class="fas fa-check-circle"></i> Tests à Effectuer
+            </div>
+            <div class="test-content">
+                <div class="test-item">
+                    <div class="test-item-title">1. Test d'Authentification</div>
+                    <div class="test-item-description">
+                        Vérifiez que vous pouvez vous connecter avec les identifiants de test et que l'utilisateur apparaît correctement dans la TopNav.
+                    </div>
+                    <button class="test-button primary" onclick="testAuth()">
+                        <i class="fas fa-sign-in-alt"></i> Tester Connexion
+                    </button>
+                    <button class="test-button danger" onclick="testLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Tester Déconnexion
+                    </button>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title">2. Test de Recherche</div>
+                    <div class="test-item-description">
+                        Tapez dans la barre de recherche et vérifiez que les résultats s'affichent et que la navigation fonctionne.
+                    </div>
+                    <button class="test-button primary" onclick="testSearch()">
+                        <i class="fas fa-search"></i> Tester Recherche
+                    </button>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title">3. Test des Notifications</div>
+                    <div class="test-item-description">
+                        Cliquez sur l'icône de cloche et vérifiez que le dropdown s'ouvre avec les notifications.
+                    </div>
+                    <button class="test-button warning" onclick="testNotifications()">
+                        <i class="fas fa-bell"></i> Tester Notifications
+                    </button>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title">4. Test de Messagerie</div>
+                    <div class="test-item-description">
+                        Cliquez sur l'icône de messages et vérifiez que l'interface de messagerie s'ouvre.
+                    </div>
+                    <button class="test-button info" onclick="testMessages()">
+                        <i class="fas fa-comments"></i> Tester Messagerie
+                    </button>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title">5. Test du Menu Utilisateur</div>
+                    <div class="test-item-description">
+                        Cliquez sur le profil utilisateur et vérifiez que le dropdown s'ouvre avec les options.
+                    </div>
+                    <button class="test-button success" onclick="testUserMenu()">
+                        <i class="fas fa-user"></i> Tester Menu Utilisateur
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-section-title">
+                <i class="fas fa-bug"></i> Problèmes Connus et Solutions
+            </div>
+            <div class="test-content">
+                <div class="test-item">
+                    <div class="test-item-title">Si les boutons ne fonctionnent pas :</div>
+                    <div class="test-item-description">
+                        <ul>
+                            <li>Vérifiez que vous êtes connecté avec les bons identifiants</li>
+                            <li>Vérifiez la console du navigateur pour les erreurs JavaScript</li>
+                            <li>Assurez-vous que tous les fichiers CSS et JS sont chargés</li>
+                            <li>Vérifiez que le contexte d'authentification est bien initialisé</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title">Si la recherche ne fonctionne pas :</div>
+                    <div class="test-item-description">
+                        <ul>
+                            <li>Vérifiez que le service de recherche est bien importé</li>
+                            <li>Vérifiez que les données mockées sont disponibles</li>
+                            <li>Assurez-vous que la navigation fonctionne correctement</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title">Si les dropdowns ne s'ouvrent pas :</div>
+                    <div class="test-item-description">
+                        <ul>
+                            <li>Vérifiez que les styles CSS sont bien appliqués</li>
+                            <li>Vérifiez que les event listeners sont bien attachés</li>
+                            <li>Assurez-vous qu'il n'y a pas de conflits de z-index</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fonctions de test
+        function testAuth() {
+            document.getElementById('authStatus').textContent = '✅ Testé';
+            document.getElementById('authStatus').className = 'status-value success';
+            console.log('Test d\'authentification - Vérifiez que vous êtes connecté');
+        }
+
+        function testLogout() {
+            document.getElementById('logoutStatus').textContent = '✅ Testé';
+            document.getElementById('logoutStatus').className = 'status-value success';
+            console.log('Test de déconnexion - Vérifiez que vous êtes déconnecté');
+        }
+
+        function testSearch() {
+            document.getElementById('searchStatus').textContent = '✅ Testé';
+            document.getElementById('searchStatus').className = 'status-value success';
+            console.log('Test de recherche - Tapez dans la barre de recherche');
+        }
+
+        function testNotifications() {
+            document.getElementById('notificationStatus').textContent = '✅ Testé';
+            document.getElementById('notificationStatus').className = 'status-value success';
+            console.log('Test de notifications - Cliquez sur l\'icône de cloche');
+        }
+
+        function testMessages() {
+            document.getElementById('messageStatus').textContent = '✅ Testé';
+            document.getElementById('messageStatus').className = 'status-value success';
+            console.log('Test de messagerie - Cliquez sur l\'icône de messages');
+        }
+
+        function testUserMenu() {
+            document.getElementById('userStatus').textContent = '✅ Testé';
+            document.getElementById('userStatus').className = 'status-value success';
+            console.log('Test du menu utilisateur - Cliquez sur le profil utilisateur');
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page de test TopNav chargée');
+            console.log('Identifiants de test : rh@centre-diagnostic.com / Rh@2025CDL');
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,161 @@
+/* Styles pour les cartes statistiques */
+.stats-cards {
+    margin-bottom: 1.5rem;
+  }
+  
+  .stats-card {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    padding: 1.25rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 4px solid transparent;
+  }
+  
+  .stats-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  }
+  
+  .stats-card-icon {
+    background-color: rgba(0, 0, 0, 0.08);
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+  
+  .stats-card-content {
+    flex-grow: 1;
+  }
+  
+  .stats-card-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+  }
+  
+  .stats-card-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 0;
+  }
+  
+  /* Variantes de couleurs */
+  .stats-card-primary {
+    border-left-color: #0d6efd;
+  }
+  
+  .stats-card-primary .stats-card-icon {
+    color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+  }
+  
+  .stats-card-success {
+    border-left-color: #198754;
+  }
+  
+  .stats-card-success .stats-card-icon {
+    color: #198754;
+    background-color: rgba(25, 135, 84, 0.1);
+  }
+  
+  .stats-card-warning {
+    border-left-color: #ffc107;
+  }
+  
+  .stats-card-warning .stats-card-icon {
+    color: #ffc107;
+    background-color: rgba(255, 193, 7, 0.1);
+  }
+  
+  .stats-card-info {
+    border-left-color: #0dcaf0;
+  }
+  
+  .stats-card-info .stats-card-icon {
+    color: #0dcaf0;
+    background-color: rgba(13, 202, 240, 0.1);
+  }
+  
+  .stats-card-secondary {
+    border-left-color: #6c757d;
+  }
+  
+  .stats-card-secondary .stats-card-icon {
+    color: #6c757d;
+    background-color: rgba(108, 117, 125, 0.1);
+  }
+  
+  .stats-card-light {
+    border-left-color: #adb5bd;
+  }
+  
+  .stats-card-light .stats-card-icon {
+    color: #6c757d;
+    background-color: rgba(173, 181, 189, 0.1);
+  }
+  
+  /* Squelettes pour le chargement */
+  .stats-cards-skeleton {
+    margin-bottom: 1.5rem;
+  }
+  
+  .stats-card.skeleton {
+    padding: 1.25rem;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-left: 4px solid #e9ecef;
+  }
+  
+  .stats-card-skeleton-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  .skeleton-circle {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    margin-right: 1rem;
+    animation: pulse 1.5s infinite;
+    flex-shrink: 0;
+  }
+  
+  .skeleton-lines {
+    flex-grow: 1;
+  }
+  
+  .skeleton-line {
+    height: 1.25rem;
+    background-color: #e9ecef;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+    animation: pulse 1.5s infinite;
+  }
+  
+  .skeleton-line.short {
+    width: 70%;
+    height: 0.875rem;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }

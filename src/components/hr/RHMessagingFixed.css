@@ -1,0 +1,132 @@
+/* Sending Indicator */
+.sending-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #667eea;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.sending-indicator i {
+  font-size: 14px;
+}
+
+/* Message Input Disabled State */
+.message-textarea:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Enhanced Button States */
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.send-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Debug Information */
+.debug-info {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  z-index: 1000;
+  max-width: 300px;
+}
+
+/* Message Status Indicators */
+.message-item.sending {
+  opacity: 0.7;
+}
+
+.message-item.sent {
+  opacity: 1;
+}
+
+/* Enhanced Employee Selection */
+.employee-item:hover {
+  background: #e0e7ff;
+  border-color: #667eea;
+  transform: translateX(2px);
+}
+
+.employee-item.selected {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+  transform: translateX(4px);
+}
+
+/* Loading States */
+.loading {
+  text-align: center;
+  color: #6b7280;
+  padding: 20px;
+  font-style: italic;
+}
+
+.no-employees {
+  text-align: center;
+  color: #6b7280;
+  padding: 20px;
+}
+
+.no-employees i {
+  font-size: 24px;
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+
+/* Message Animation */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-item {
+  animation: messageSlideIn 0.3s ease-out;
+}
+
+/* Responsive Improvements */
+@media (max-width: 768px) {
+  .messaging-container {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .employees-sidebar {
+    width: 100%;
+    max-height: 200px;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .message-item {
+    max-width: 85%;
+  }
+  
+  .sending-indicator {
+    font-size: 11px;
+  }
+}
+
+
+
+

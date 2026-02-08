@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Assistant Vocal Wally</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+        
+        .status {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        button {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .stop-btn {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+        }
+        
+        .test-btn {
+            background: linear-gradient(45deg, #3b82f6, #2563eb);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(45deg, #8b5cf6, #7c3aed);
+        }
+        
+        .info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info h3 {
+            margin-top: 0;
+        }
+        
+        .info ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .info li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .info li:last-child {
+            border-bottom: none;
+        }
+        
+        .logs {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+        
+        .logs h3 {
+            margin-top: 0;
+        }
+        
+        .log-content {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .error {
+            color: #f87171;
+            font-weight: bold;
+        }
+        
+        .success {
+            color: #4ade80;
+            font-weight: bold;
+        }
+        
+        .warning {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Assistant Vocal Wally</h1>
+        
+        <div class="status" id="status">
+            Assistant vocal de test - Cliquez pour commencer
+        </div>
+        
+        <div class="controls">
+            <button id="startBtn" onclick="startListening()">
+                🎤 Démarrer l'écoute
+            </button>
+            
+            <button id="stopBtn" class="stop-btn" onclick="stopListening()" disabled>
+                🛑 Arrêter
+            </button>
+            
+            <button class="test-btn" onclick="testMicrophone()">
+                🎤 Tester Microphone
+            </button>
+            
+            <button class="reset-btn" onclick="resetAssistant()">
+                🔄 Réinitialiser
+            </button>
+        </div>
+        
+        <div class="info">
+            <h3>📋 Informations de débogage</h3>
+            <ul id="debugInfo">
+                <li><strong>Navigateur:</strong> <span id="userAgent"></span></li>
+                <li><strong>Reconnaissance vocale:</strong> <span id="speechSupport"></span></li>
+                <li><strong>getUserMedia:</strong> <span id="mediaSupport"></span></li>
+                <li><strong>HTTPS:</strong> <span id="httpsStatus"></span></li>
+            </ul>
+        </div>
+        
+        <div class="logs">
+            <h3>📝 Logs de la console</h3>
+            <div class="log-content" id="logContent">
+                Assistant vocal initialisé...
+                Cliquez sur "Démarrer l'écoute" pour commencer le test.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let recognition = null;
+        let isListening = false;
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDebugInfo();
+            log('🔍 Assistant vocal initialisé');
+            
+            // Vérifier la disponibilité de la reconnaissance vocale
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                log('✅ Reconnaissance vocale disponible');
+                updateStatus('Reconnaissance vocale disponible - Cliquez pour tester', 'success');
+            } else {
+                log('❌ Reconnaissance vocale non disponible');
+                updateStatus('Reconnaissance vocale non disponible dans ce navigateur', 'error');
+                document.getElementById('startBtn').disabled = true;
+            }
+        });
+        
+        function updateDebugInfo() {
+            document.getElementById('userAgent').textContent = navigator.userAgent;
+            document.getElementById('speechSupport').textContent = 
+                ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) ? '✅ Disponible' : '❌ Non disponible';
+            document.getElementById('mediaSupport').textContent = 
+                (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ? '✅ Supporté' : '❌ Non supporté';
+            document.getElementById('httpsStatus').textContent = 
+                window.location.protocol === 'https:' ? '✅ Sécurisé' : '⚠️ Non sécurisé (peut causer des problèmes)';
+        }
+        
+        function startListening() {
+            try {
+                log('🎤 Démarrage de l\'écoute...');
+                updateStatus('Démarrage de l\'écoute...', 'warning');
+                
+                // Créer une nouvelle instance de reconnaissance vocale
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                
+                // Configuration
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'fr-FR';
+                recognition.maxAlternatives = 1;
+                
+                // Gestionnaires d'événements
+                recognition.onstart = function() {
+                    log('✅ Écoute démarrée');
+                    isListening = true;
+                    updateStatus('🎤 Écoute en cours... Parlez maintenant', 'success');
+                    document.getElementById('startBtn').disabled = true;
+                    document.getElementById('stopBtn').disabled = false;
+                };
+                
+                recognition.onresult = function(event) {
+                    log('📝 Résultat reçu: ' + JSON.stringify(event, null, 2));
+                    const transcript = event.results[0][0].transcript;
+                    log('🗣️ Transcription: "' + transcript + '"');
+                    updateStatus('🎯 Reçu: "' + transcript + '"', 'success');
+                    
+                    // Arrêter automatiquement après un résultat
+                    setTimeout(() => {
+                        stopListening();
+                    }, 2000);
+                };
+                
+                recognition.onerror = function(event) {
+                    log('❌ Erreur de reconnaissance vocale: ' + event.error, 'error');
+                    updateStatus('❌ Erreur: ' + event.error, 'error');
+                    isListening = false;
+                    document.getElementById('startBtn').disabled = false;
+                    document.getElementById('stopBtn').disabled = true;
+                };
+                
+                recognition.onend = function() {
+                    log('🛑 Écoute terminée');
+                    isListening = false;
+                    document.getElementById('startBtn').disabled = false;
+                    document.getElementById('stopBtn').disabled = true;
+                    
+                    if (document.getElementById('status').textContent.indexOf('Erreur') === -1) {
+                        updateStatus('Assistant vocal de test - Cliquez pour recommencer', 'success');
+                    }
+                };
+                
+                // Démarrer l'écoute
+                recognition.start();
+                
+            } catch (error) {
+                log('💥 Erreur lors du démarrage: ' + error.message, 'error');
+                updateStatus('💥 Erreur: ' + error.message, 'error');
+            }
+        }
+        
+        function stopListening() {
+            try {
+                if (recognition) {
+                    recognition.stop();
+                    log('🛑 Arrêt de l\'écoute');
+                }
+            } catch (error) {
+                log('💥 Erreur lors de l\'arrêt: ' + error.message, 'error');
+            }
+        }
+        
+        function testMicrophone() {
+            log('🎤 Test du microphone...');
+            updateStatus('🎤 Test du microphone...', 'warning');
+            
+            // Test simple d'accès au microphone
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        log('✅ Microphone accessible et fonctionnel');
+                        updateStatus('✅ Microphone accessible et fonctionnel', 'success');
+                        
+                        // Arrêter le stream
+                        stream.getTracks().forEach(track => track.stop());
+                    })
+                    .catch(error => {
+                        log('❌ Erreur d\'accès au microphone: ' + error.message, 'error');
+                        updateStatus('❌ Erreur microphone: ' + error.message, 'error');
+                    });
+            } else {
+                log('❌ getUserMedia non supporté dans ce navigateur', 'error');
+                updateStatus('❌ getUserMedia non supporté dans ce navigateur', 'error');
+            }
+        }
+        
+        function resetAssistant() {
+            log('🔄 Réinitialisation de l\'assistant...');
+            updateStatus('Assistant vocal de test - Cliquez pour commencer', 'success');
+            
+            if (recognition) {
+                recognition.stop();
+                recognition = null;
+            }
+            
+            isListening = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + type;
+        }
+        
+        function log(message, type = 'info') {
+            const logContent = document.getElementById('logContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            
+            logContent.textContent += logEntry;
+            logContent.scrollTop = logContent.scrollHeight;
+            
+            // Afficher aussi dans la console du navigateur
+            if (type === 'error') {
+                console.error(message);
+            } else if (type === 'warning') {
+                console.warn(message);
+            } else {
+                console.log(message);
+            }
+        }
+    </script>
+</body>
+</html>

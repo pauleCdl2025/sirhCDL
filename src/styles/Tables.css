@@ -1,0 +1,308 @@
+/* styles/Tables.css */
+
+.table-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.card-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #ffffff;
+  border-radius: 8px 8px 0 0;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(74, 108, 247, 0.1);
+  color: #4a6cf7;
+  border-radius: 8px;
+  margin-right: 0.75rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.custom-table thead th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e9ecef;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.custom-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.custom-table tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e9ecef;
+  color: #495057;
+}
+
+.custom-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 600;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+.bg-success {
+  background-color: #198754 !important;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.bg-warning {
+  background-color: #ffc107 !important;
+}
+
+.bg-info {
+  background-color: #0dcaf0 !important;
+}
+
+.bg-secondary {
+  background-color: #6c757d !important;
+}
+
+.text-dark {
+  color: #212529 !important;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.page-title-wrapper {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .custom-table {
+    min-width: 650px;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  
+  .card-header .btn {
+    margin-top: 1rem;
+    width: 100%;
+  }
+}
+/* Styles pour les cartes statistiques */
+.stats-cards {
+  margin-bottom: 1.5rem;
+}
+
+.stats-card {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  padding: 1.25rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-left: 4px solid transparent;
+}
+
+.stats-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.stats-card-icon {
+  background-color: rgba(0, 0, 0, 0.08);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.stats-card-content {
+  flex-grow: 1;
+}
+
+.stats-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
+.stats-card-label {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+/* Variantes de couleurs */
+.stats-card-primary {
+  border-left-color: #0d6efd;
+}
+
+.stats-card-primary .stats-card-icon {
+  color: #0d6efd;
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.stats-card-success {
+  border-left-color: #198754;
+}
+
+.stats-card-success .stats-card-icon {
+  color: #198754;
+  background-color: rgba(25, 135, 84, 0.1);
+}
+
+.stats-card-warning {
+  border-left-color: #ffc107;
+}
+
+.stats-card-warning .stats-card-icon {
+  color: #ffc107;
+  background-color: rgba(255, 193, 7, 0.1);
+}
+
+.stats-card-info {
+  border-left-color: #0dcaf0;
+}
+
+.stats-card-info .stats-card-icon {
+  color: #0dcaf0;
+  background-color: rgba(13, 202, 240, 0.1);
+}
+
+.stats-card-secondary {
+  border-left-color: #6c757d;
+}
+
+.stats-card-secondary .stats-card-icon {
+  color: #6c757d;
+  background-color: rgba(108, 117, 125, 0.1);
+}
+
+.stats-card-light {
+  border-left-color: #adb5bd;
+}
+
+.stats-card-light .stats-card-icon {
+  color: #6c757d;
+  background-color: rgba(173, 181, 189, 0.1);
+}
+
+/* Squelettes pour le chargement */
+.stats-cards-skeleton {
+  margin-bottom: 1.5rem;
+}
+
+.stats-card.skeleton {
+  padding: 1.25rem;
+  height: 100%;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  border-left: 4px solid #e9ecef;
+}
+
+.stats-card-skeleton-content {
+  display: flex;
+  align-items: center;
+}
+
+.skeleton-circle {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  margin-right: 1rem;
+  animation: pulse 1.5s infinite;
+  flex-shrink: 0;
+}
+
+.skeleton-lines {
+  flex-grow: 1;
+}
+
+.skeleton-line {
+  height: 1.25rem;
+  background-color: #e9ecef;
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+  animation: pulse 1.5s infinite;
+}
+
+.skeleton-line.short {
+  width: 70%;
+  height: 0.875rem;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}

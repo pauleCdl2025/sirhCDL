@@ -1,0 +1,28 @@
+# Configuration Netlify pour le portail RH CDL
+
+[build]
+  # Commande de build du frontend React
+  command = "npm run build"
+  
+  # Dossier de sortie du build Create React App
+  publish = "build"
+  
+  # Variables d'environnement pour le build (à configurer dans Netlify Dashboard)
+  # REACT_APP_API_URL = URL de votre backend déployé
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# Redirects pour le routing SPA (React Router)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers de sécurité
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

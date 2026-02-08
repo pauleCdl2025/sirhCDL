@@ -1,0 +1,21 @@
+<svg width="200" height="120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond du logo -->
+  <rect width="200" height="120" fill="#3498db" rx="15"/>
+  
+  <!-- Croix médicale -->
+  <rect x="85" y="30" width="30" height="60" fill="white"/>
+  <rect x="70" y="45" width="60" height="30" fill="white"/>
+  
+  <!-- Texte -->
+  <text x="100" y="110" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="bold">
+    CENTRE DE SANTÉ
+  </text>
+</svg>
+
+
+
+
+
+
+
+

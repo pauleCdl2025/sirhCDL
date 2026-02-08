@@ -1,0 +1,451 @@
+/* Styles spécifiques pour la gestion des contrats */
+
+/* Tableau des contrats */
+.contract-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.contract-table th {
+  background: #f8f9fa;
+  padding: 1rem 0.75rem;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.contract-table td {
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: middle;
+}
+
+.contract-table tbody tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+/* Colonnes spécifiques */
+.contract-table .employee-column {
+  min-width: 200px;
+}
+
+.contract-table .type-column {
+  min-width: 120px;
+}
+
+.contract-table .poste-column {
+  min-width: 150px;
+}
+
+.contract-table .service-column {
+  min-width: 150px;
+}
+
+.contract-table .date-column {
+  min-width: 120px;
+}
+
+.contract-table .status-column {
+  min-width: 140px;
+}
+
+.contract-table .actions-column {
+  min-width: 300px;
+}
+
+/* Boutons d'action dans le tableau */
+.contract-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  min-width: 280px;
+}
+
+.contract-actions .btn {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.contract-actions .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.contract-actions .btn:active {
+  transform: translateY(0);
+}
+
+/* Couleurs spécifiques pour les boutons */
+.contract-actions .btn-info {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+}
+
+.contract-actions .btn-info:hover {
+  background-color: #138496;
+  border-color: #117a8b;
+}
+
+.contract-actions .btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.contract-actions .btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.contract-actions .btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+.contract-actions .btn-success:hover {
+  background-color: #1e7e34;
+  border-color: #1c7430;
+}
+
+.contract-actions .btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+
+.contract-actions .btn-warning:hover {
+  background-color: #e0a800;
+  border-color: #d39e00;
+}
+
+.contract-actions .btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+.contract-actions .btn-secondary:hover {
+  background-color: #545b62;
+  border-color: #4e555b;
+}
+
+.contract-actions .btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+.contract-actions .btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* Boutons désactivés */
+.contract-actions .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.contract-actions .btn:disabled:hover {
+  transform: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive design pour les boutons */
+@media (max-width: 768px) {
+  .contract-actions {
+    min-width: auto;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+  
+  .contract-actions .btn {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Animation d'apparition des boutons */
+.contract-actions .btn {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effects améliorés */
+.contract-actions .btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.contract-actions .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.contract-actions .btn:hover::before {
+  left: 100%;
+}
+
+/* Focus states pour l'accessibilité */
+.contract-actions .btn:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Tooltip styles */
+.contract-actions .btn[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 0.25rem;
+}
+
+.contract-actions .btn[title]:hover::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 0.25rem solid transparent;
+  border-top-color: #333;
+  margin-bottom: 0;
+}
+
+/* Amélioration de l'affichage des colonnes */
+.contract-table .sortable-header {
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.contract-table .sortable-header:hover {
+  background-color: #e9ecef;
+}
+
+.contract-table .sortable-header i {
+  margin-left: 0.5rem;
+  color: #6c757d;
+}
+
+/* Statuts des contrats */
+.contract-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.contract-status .badge {
+  margin-bottom: 0.25rem;
+}
+
+/* Avatar des employés */
+.employee-avatar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.employee-avatar .user-avatar {
+  flex-shrink: 0;
+}
+
+.employee-avatar .employee-info {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.employee-avatar .employee-name {
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 0.125rem;
+}
+
+.employee-avatar .employee-id {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+/* Responsive design pour le tableau */
+@media (max-width: 1200px) {
+  .contract-table {
+    font-size: 0.875rem;
+  }
+  
+  .contract-table th,
+  .contract-table td {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .contract-actions {
+    min-width: 250px;
+  }
+}
+
+@media (max-width: 992px) {
+  .contract-table .actions-column {
+    min-width: 250px;
+  }
+  
+  .contract-actions {
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contract-table {
+    font-size: 0.8rem;
+  }
+  
+  .contract-table th,
+  .contract-table td {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  .contract-actions {
+    min-width: auto;
+    flex-direction: column;
+  }
+  
+  .contract-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Styles pour forcer la visibilité des boutons */
+.contract-actions .btn,
+.contract-actions button,
+.contract-table .btn,
+.contract-table button {
+  /* Visibilité forcée */
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-block !important;
+  
+  /* Styles de base visibles */
+  padding: 8px 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  
+  /* Ombres pour la visibilité */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  margin: 2px !important;
+}
+
+/* Boutons d'action spécifiques */
+.contract-actions .btn-info {
+  background: linear-gradient(135deg, #17a2b8, #138496) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.contract-actions .btn-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.contract-actions .btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.contract-actions .btn-warning {
+  background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+  color: #212529 !important;
+  border: none !important;
+}
+
+.contract-actions .btn-secondary {
+  background: #6c757d !important;
+  color: white !important;
+  border: none !important;
+}
+
+.contract-actions .btn-danger {
+  background: linear-gradient(135deg, #dc3545, #c82333) !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* Effets de survol */
+.contract-actions .btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Boutons dans le tableau */
+.contract-table .btn {
+  margin: 2px !important;
+  min-width: 80px !important;
+}
+
+/* Boutons de groupe */
+.btn-group .btn {
+  margin: 0 1px !important;
+  border-radius: 6px !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contract-actions .btn {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    margin: 1px !important;
+  }
+  
+  .contract-table .btn {
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+    min-width: 60px !important;
+  }
+}

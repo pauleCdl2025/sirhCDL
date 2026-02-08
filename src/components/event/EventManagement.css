@@ -1,0 +1,737 @@
+/* Styles pour la gestion des événements */
+.event-management-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.event-header h2 {
+  margin: 0;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Panel des filtres */
+.filters-panel {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.filters-panel .form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filters-panel .form-control,
+.filters-panel .form-select {
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.filters-panel .form-control:focus,
+.filters-panel .form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Actions en lot */
+.bulk-actions-panel {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border: 1px solid #90caf9;
+  border-radius: 8px;
+}
+
+.bulk-actions-panel .btn {
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+/* Statistiques */
+.stats-panel {
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card h4 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.stat-card small {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+/* Tableau amélioré */
+.table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.table thead th {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border: none;
+  padding: 15px;
+  font-weight: 600;
+  color: #495057;
+  position: relative;
+}
+
+.table thead th.sortable-header {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.table thead th.sortable-header:hover {
+  background: linear-gradient(135deg, #e9ecef, #dee2e6);
+  color: #007bff;
+}
+
+.table thead th.sortable-header:active {
+  transform: scale(0.98);
+}
+
+.table tbody td {
+  padding: 15px;
+  vertical-align: middle;
+  border-top: 1px solid #f0f0f0;
+}
+
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+  transform: scale(1.01);
+}
+
+.table tbody tr.table-primary {
+  background-color: rgba(0, 123, 255, 0.1) !important;
+  border-left: 4px solid #007bff;
+}
+
+/* Checkboxes personnalisées */
+.form-check-input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.form-check-input:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+/* Badges et statuts */
+.badge {
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 20px;
+}
+
+.badge.bg-success {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+}
+
+.badge.bg-warning {
+  background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+  color: #212529 !important;
+}
+
+.badge.bg-secondary {
+  background: linear-gradient(135deg, #6c757d, #495057) !important;
+}
+
+.badge.bg-info {
+  background: linear-gradient(135deg, #17a2b8, #138496) !important;
+}
+
+/* Boutons d'action */
+.btn-group .btn {
+  padding: 8px 12px;
+  margin: 0 2px;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-info:hover {
+  background: #17a2b8;
+  border-color: #17a2b8;
+  transform: scale(1.05);
+}
+
+.btn-outline-primary:hover {
+  background: #007bff;
+  border-color: #007bff;
+  transform: scale(1.05);
+}
+
+.btn-outline-danger:hover {
+  background: #dc3545;
+  border-color: #dc3545;
+  transform: scale(1.05);
+}
+
+/* Styles pour le modal */
+.modal.show {
+  display: block !important;
+}
+
+.modal-content {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1051;
+}
+
+/* Styles pour le modal amélioré */
+.modal-lg .modal-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border-bottom: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.modal-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.modal-body {
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  border-radius: 0 0 12px 12px;
+}
+
+.modal-backdrop {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  transition: all 0.3s ease;
+}
+
+/* Styles pour les formulaires */
+.form-label {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px 15px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.invalid-feedback {
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.form-text {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+/* Styles pour les boutons */
+.btn {
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.btn-secondary {
+  background: #6c757d;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+/* Styles pour les alertes */
+.alert {
+  border: none;
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  animation: slideInDown 0.3s ease-out;
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #d4edda, #c3e6cb);
+  color: #155724;
+  border-left: 4px solid #28a745;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+}
+
+.alert-warning {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  color: #856404;
+  border-left: 4px solid #ffc107;
+}
+
+.alert-info {
+  background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+  color: #0c5460;
+  border-left: 4px solid #17a2b8;
+}
+
+.alert-dismissible .btn-close {
+  padding: 0.75rem 1rem;
+  margin: -0.75rem -1rem -0.75rem auto;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .event-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .filters-panel .row {
+    margin: 0;
+  }
+  
+  .filters-panel .col-md-3,
+  .filters-panel .col-md-2,
+  .filters-panel .col-md-1 {
+    margin-bottom: 15px;
+  }
+  
+  .stats-panel .row {
+    margin: 0;
+  }
+  
+  .stats-panel .col-md-3 {
+    margin-bottom: 15px;
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .table-responsive {
+    font-size: 14px;
+  }
+  
+  .btn-group .btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .bulk-actions-panel {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Animation pour le modal */
+.modal.show .modal-dialog {
+  animation: modalSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-60px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Animation pour le backdrop */
+.modal-backdrop.show {
+  animation: backdropFadeIn 0.3s ease-out;
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animation pour les statistiques */
+.stat-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation pour les notifications */
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Styles pour les composants de test */
+.test-component {
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 30px;
+}
+
+.test-component .card {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.test-component .card-header {
+  background: linear-gradient(135deg, #6f42c1, #5a32a3);
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Icônes dans les labels */
+.form-label i {
+  width: 20px;
+  text-align: center;
+}
+
+/* Badge de statut */
+.badge.bg-info {
+  background: linear-gradient(135deg, #17a2b8, #138496) !important;
+  color: white !important;
+  font-size: 0.875rem;
+  padding: 8px 12px;
+}
+
+/* Boutons du modal */
+.modal .btn {
+  padding: 12px 24px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.modal .btn-outline-secondary {
+  border: 2px solid #6c757d;
+  color: #6c757d;
+}
+
+.modal .btn-outline-secondary:hover {
+  background: #6c757d;
+  border-color: #6c757d;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.modal .btn-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.modal .btn-primary:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+/* Responsive pour le modal */
+@media (max-width: 768px) {
+  .modal-lg .modal-content {
+    max-width: 95vw;
+    margin: 10px;
+  }
+  
+  .modal .row {
+    margin: 0;
+  }
+  
+  .modal .col-md-6 {
+    margin-bottom: 15px;
+  }
+  
+  .modal .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+/* Styles pour forcer la visibilité des boutons dans EventManagement */
+.event-management-container .btn,
+.event-management-container button,
+.filters-panel .btn,
+.filters-panel button,
+.bulk-actions-panel .btn,
+.bulk-actions-panel button,
+.table .btn,
+.table button {
+  /* Visibilité forcée */
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-block !important;
+  
+  /* Styles de base visibles */
+  padding: 8px 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  
+  /* Ombres pour la visibilité */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  margin: 2px !important;
+}
+
+/* Boutons d'action spécifiques */
+.event-header .btn-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3) !important;
+}
+
+.filters-panel .btn-outline-secondary {
+  background: transparent !important;
+  color: #6c757d !important;
+  border: 2px solid #6c757d !important;
+}
+
+.bulk-actions-panel .btn-danger {
+  background: linear-gradient(135deg, #dc3545, #c82333) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.bulk-actions-panel .btn-outline-info {
+  background: transparent !important;
+  color: #17a2b8 !important;
+  border: 2px solid #17a2b8 !important;
+}
+
+/* Boutons dans le tableau */
+.table .btn-outline-info,
+.table .btn-outline-primary,
+.table .btn-outline-danger {
+  background: transparent !important;
+  border: 2px solid !important;
+  margin: 2px !important;
+  min-width: 70px !important;
+}
+
+.table .btn-outline-info {
+  color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
+}
+
+.table .btn-outline-primary {
+  color: #007bff !important;
+  border-color: #007bff !important;
+}
+
+.table .btn-outline-danger {
+  color: #dc3545 !important;
+  border-color: #dc3545 !important;
+}
+
+/* Boutons de groupe */
+.btn-group .btn {
+  margin: 0 1px !important;
+  border-radius: 6px !important;
+}
+
+/* Effets de survol */
+.event-management-container .btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .event-management-container .btn {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    margin: 1px !important;
+  }
+  
+  .table .btn {
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+    min-width: 60px !important;
+  }
+}
+
+/* Styles pour EventManagement */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-pointer:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.table th.cursor-pointer {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.table th.cursor-pointer:hover {
+  background-color: #f8f9fa;
+}
+
+.badge {
+  font-size: 0.75em;
+}
+
+.modal-lg {
+  max-width: 800px;
+}
+
+.form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.alert-dismissible {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.form-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.invalid-feedback {
+  font-size: 0.875em;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}

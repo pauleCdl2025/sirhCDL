@@ -1,0 +1,287 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Sidebar from './Sidebar';
+import DocumentUploadModal from './DocumentUploadModal';
+import StepValidationModal from './StepValidationModal';
+import ProcedureGuideModal from './ProcedureGuideModal';
+
+// Constantes pour les étapes de la procédure
+const PROCEDURE_STEPS = {
+    'nouveau': {
+        titre: 'Dossier créé',
+        description: 'Votre dossier a été créé. Préparez vos documents pour l\'authentification.',
+        icone: 'fas fa-folder-plus',
+        couleur: 'primary',
+        documentsRequis: [
+            { type: 'diplome', nom: 'Diplôme de médecine (original et copie)' },
+            { type: 'piece_identite', nom: 'Pièce d\'identité (passeport)' },
+            { type: 'releves_notes', nom: 'Relevés de notes' },
+            { type: 'acte_naissance', nom: 'Acte de naissance' }
+        ],
+        instructions: 'Rassemblez tous vos diplômes originaux et leurs copies certifiées conformes.'
+    },
+    'authentification': {
+        titre: 'Authentification des diplômes',
+        description: 'Authentification en cours auprès des ambassades et universités.',
+        icone: 'fas fa-certificate',
+        couleur: 'warning',
+        documentsRequis: [
+            { type: 'diplome_authentifie', nom: 'Diplômes authentifiés par l\'ambassade' },
+            { type: 'attestation_ambassade', nom: 'Attestation d\'authentification' },
+            { type: 'traduction_officielle', nom: 'Traduction officielle (si nécessaire)' }
+        ],
+        instructions: 'Présentez vos diplômes originaux à l\'ambassade pour authentification et légalisation.'
+    },
+    // Autres étapes similaires...
+};
+
+const MedicalFileTracking = () => {
+    const navigate = useNavigate();
+    const [dossier, setDossier] = useState(null);
+    const [documents, setDocuments] = useState([]);
+    const [etapeActuelle, setEtapeActuelle] = useState('nouveau');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [activeModal, setActiveModal] = useState(null);
+    const [selectedDocument, setSelectedDocument] = useState(null);
+
+    useEffect(() => {
+        // Vérifier l'authentification
+        const userData = sessionStorage.getItem('medecin_user');
+        if (!userData) {
+            navigate('/medical-login');
+            return;
+        }
+
+        // Charger les données du dossier
+        const fetchDossier = async () => {
+            try {
+                // TODO: Remplacer par un véritable appel API
+                const user = JSON.parse(userData);
+                
+                const mockDossier = {
+                    id: user.id,
+                    nom: user.nom,
+                    prenom: user.prenom,
+                    email: user.email,
+                    telephone: user.telephone || '',
+                    nationalite: user.nationalite || '',
+                    specialite: user.specialite || '',
+                    universite_diplome: user.universite || '',
+                    statut: 'nouveau',
+                    dateCreation: new Date().toISOString()
+                };
+
+                setDossier(mockDossier);
+                setEtapeActuelle(mockDossier.statut);
+                setLoading(false);
+            } catch (err) {
+                setError('Impossible de charger le dossier');
+                setLoading(false);
+            }
+        };
+
+        fetchDossier();
+    }, [navigate]);
+
+    // Calculer la progression
+    const calculerProgression = () => {
+        const etapes = Object.keys(PROCEDURE_STEPS);
+        const indexEtapeActuelle = etapes.indexOf(etapeActuelle);
+        return ((indexEtapeActuelle + 1) / etapes.length) * 100;
+    };
+
+    // Télécharger un document
+    const handleDocumentUpload = (documentData) => {
+        // TODO: Implémenter la logique de téléchargement de document
+        console.log('Document à télécharger:', documentData);
+        
+        // Mettre à jour la liste des documents
+        setDocuments(prevDocs => [...prevDocs, documentData]);
+        
+        // Fermer le modal
+        setActiveModal(null);
+    };
+
+    // Valider une étape
+    const handleStepValidation = (validationData) => {
+        // TODO: Implémenter la logique de validation d'étape
+        console.log('Validation de l\'étape:', validationData);
+        
+        // Mettre à jour l'étape actuelle
+        const etapes = Object.keys(PROCEDURE_STEPS);
+        const indexEtapeActuelle = etapes.indexOf(etapeActuelle);
+        const nouvelleEtape = etapes[indexEtapeActuelle + 1];
+        
+        setEtapeActuelle(nouvelleEtape);
+        setActiveModal(null);
+    };
+
+    // Déterminer les documents manquants
+    const getDocumentsManquants = () => {
+        const documentsRequis = PROCEDURE_STEPS[etapeActuelle].documentsRequis;
+        return documentsRequis.filter(
+            doc => !documents.some(uploaded => uploaded.type === doc.type)
+        );
+    };
+
+    // Vérifier si l'étape peut être validée
+    const canValidateStep = () => {
+        const documentsManquants = getDocumentsManquants();
+        return documentsManquants.length === 0;
+    };
+
+    if (loading) {
+        return (
+            <div className="d-flex justify-content-center align-items-center vh-100">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Chargement...</span>
+                </div>
+            </div>
+        );
+    }
+
+    if (!dossier) {
+        return (
+            <div className="welcome-card">
+                <h2>Bienvenue sur votre Espace Médecin</h2>
+                <p>Votre dossier n'a pas encore été créé. Veuillez contacter le service RH.</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="layout-container">
+            <Sidebar activeRoute="/medical-file-tracking" />
+            
+            <main className="main-content">
+                <nav className="top-nav">
+                    <div className="ms-auto">
+                        <span className="text-muted">Dr. {dossier.nom} {dossier.prenom}</span>
+                    </div>
+                </nav>
+
+                <div className="page-content">
+                    {/* Titre et progression */}
+                    <div className="page-title-wrapper">
+                        <h1 className="page-title">Suivi de votre Procédure d'Homologation</h1>
+                        <p className="page-subtitle">
+                            Dossier créé le {new Date(dossier.dateCreation).toLocaleDateString()}
+                        </p>
+                    </div>
+
+                    {/* Barre de progression */}
+                    <div className="progress-container">
+                        <div className="progress-header">
+                            <div className="progress-percentage">{Math.round(calculerProgression())}%</div>
+                            <div className="progress">
+                                <div 
+                                    className="progress-bar bg-primary progress-bar-striped progress-bar-animated" 
+                                    style={{width: `${calculerProgression()}%`}}
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        {/* Informations personnelles */}
+                        <div className="col-md-4">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h3>Informations Personnelles</h3>
+                                </div>
+                                <div className="card-body">
+                                    <div className="mb-3">
+                                        <strong>Nom complet :</strong> {dossier.nom} {dossier.prenom}
+                                    </div>
+                                    <div className="mb-3">
+                                        <strong>Email :</strong> {dossier.email}
+                                    </div>
+                                    <div className="mb-3">
+                                        <strong>Téléphone :</strong> {dossier.telephone || 'Non renseigné'}
+                                    </div>
+                                    <div className="mb-3">
+                                        <strong>Spécialité :</strong> {dossier.specialite}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Étape actuelle */}
+                        <div className="col-md-8">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h3>Étape Actuelle : {PROCEDURE_STEPS[etapeActuelle].titre}</h3>
+                                </div>
+                                <div className="card-body">
+                                    <p>{PROCEDURE_STEPS[etapeActuelle].description}</p>
+                                    
+                                    {/* Documents requis */}
+                                    <div className="documents-requis">
+                                        <h4>Documents requis :</h4>
+                                        {PROCEDURE_STEPS[etapeActuelle].documentsRequis.map(doc => {
+                                            const documentFourni = documents.some(d => d.type === doc.type);
+                                            return (
+                                                <div key={doc.type} className="document-item">
+                                                    <span className={`badge ${documentFourni ? 'bg-success' : 'bg-warning'}`}>
+                                                        {documentFourni ? '✓' : '!'} {doc.nom}
+                                                    </span>
+                                                    {!documentFourni && (
+                                                        <button 
+                                                            className="btn btn-sm btn-primary ms-2"
+                                                            onClick={() => {
+                                                                setSelectedDocument(doc);
+                                                                setActiveModal('upload');
+                                                            }}
+                                                        >
+                                                            Télécharger
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Validation d'étape */}
+                                    {canValidateStep() && (
+                                        <button 
+                                            className="btn btn-success mt-3"
+                                            onClick={() => setActiveModal('validate')}
+                                        >
+                                            Valider cette étape
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            {/* Modals */}
+            {activeModal === 'upload' && (
+                <DocumentUploadModal 
+                    documentType={selectedDocument}
+                    onClose={() => setActiveModal(null)}
+                    onSubmit={handleDocumentUpload}
+                />
+            )}
+
+            {activeModal === 'validate' && (
+                <StepValidationModal 
+                    etape={etapeActuelle}
+                    onClose={() => setActiveModal(null)}
+                    onSubmit={handleStepValidation}
+                />
+            )}
+
+            {activeModal === 'guide' && (
+                <ProcedureGuideModal 
+                    onClose={() => setActiveModal(null)}
+                />
+            )}
+        </div>
+    );
+};
+
+export default MedicalFileTracking;

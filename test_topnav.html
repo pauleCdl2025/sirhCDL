@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test TopNav - SIRH</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3a7bd5;
+            --primary-dark: #2c5aa0;
+            --primary-light: rgba(58, 123, 213, 0.1);
+            --white: #ffffff;
+            --gray: #6c757d;
+            --gray-light: #f8f9fa;
+            --dark: #343a40;
+            --danger: #dc3545;
+            --danger-light: rgba(220, 53, 69, 0.1);
+            --success: #28a745;
+            --success-light: rgba(40, 167, 69, 0.1);
+            --warning: #ffc107;
+            --warning-light: rgba(255, 193, 7, 0.1);
+            --info: #3298dc;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
+            --transition-base: all 0.3s ease;
+            --topbar-height: 60px;
+            --gradient-primary: linear-gradient(135deg, #3a7bd5 0%, #2c5aa0 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gray-light);
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .test-title {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .test-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .test-section {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .test-section-title {
+            padding: 15px 20px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .test-content {
+            padding: 20px;
+        }
+
+        .test-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 4px;
+            background: var(--gray-light);
+        }
+
+        .test-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .test-item-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .test-item-description {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .status-success {
+            color: var(--success);
+        }
+
+        .status-warning {
+            color: var(--warning);
+        }
+
+        .status-error {
+            color: var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1 class="test-title">Test TopNav - Système SIRH</h1>
+            <p class="test-description">Vérification de la fonctionnalité complète de la barre de navigation supérieure</p>
+        </div>
+
+        <div class="test-section">
+            <div class="test-section-title">
+                <i class="fas fa-check-circle"></i> Fonctionnalités Testées
+            </div>
+            <div class="test-content">
+                <div class="test-item">
+                    <div class="test-item-title status-success">
+                        <i class="fas fa-search"></i> Recherche Globale
+                    </div>
+                    <div class="test-item-description">
+                        Recherche d'employés, contrats et notes de service avec résultats en temps réel
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title status-success">
+                        <i class="fas fa-bell"></i> Notifications
+                    </div>
+                    <div class="test-item-description">
+                        Système de notifications avec marquage lu/non-lu et navigation contextuelle
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title status-success">
+                        <i class="fas fa-comments"></i> Messagerie
+                    </div>
+                    <div class="test-item-description">
+                        Interface de messagerie avec composition d'emails et gestion des messages
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title status-success">
+                        <i class="fas fa-user"></i> Menu Utilisateur
+                    </div>
+                    <div class="test-item-description">
+                        Menu utilisateur avec profil, paramètres et déconnexion fonctionnelle
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title status-success">
+                        <i class="fas fa-bars"></i> Toggle Sidebar
+                    </div>
+                    <div class="test-item-description">
+                        Bouton de basculement de la barre latérale avec gestion responsive
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-section-title">
+                <i class="fas fa-cogs"></i> Améliorations Apportées
+            </div>
+            <div class="test-content">
+                <div class="test-item">
+                    <div class="test-item-title status-success">
+                        Gestion des Clics Extérieurs
+                    </div>
+                    <div class="test-item-description">
+                        Les dropdowns se ferment automatiquement lors d'un clic en dehors
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title status-success">
+                        Service de Recherche
+                    </div>
+                    <div class="test-item-description">
+                        Service API dédié pour la recherche avec résultats filtrés par type
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title status-success">
+                        Navigation Contextuelle
+                    </div>
+                    <div class="test-item-description">
+                        Navigation automatique vers les pages appropriées selon le type de résultat
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title status-success">
+                        Design Responsive
+                    </div>
+                    <div class="test-item-description">
+                        Interface adaptative pour mobile et tablette avec gestion des espaces
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title status-success">
+                        États de Chargement
+                    </div>
+                    <div class="test-item-description">
+                        Indicateurs visuels de chargement pour une meilleure expérience utilisateur
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-section-title">
+                <i class="fas fa-info-circle"></i> Instructions de Test
+            </div>
+            <div class="test-content">
+                <div class="test-item">
+                    <div class="test-item-title">
+                        1. Test de la Recherche
+                    </div>
+                    <div class="test-item-description">
+                        Tapez "Jean" ou "contrat" dans la barre de recherche pour voir les résultats
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title">
+                        2. Test des Notifications
+                    </div>
+                    <div class="test-item-description">
+                        Cliquez sur l'icône de cloche pour ouvrir les notifications et tester les actions
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title">
+                        3. Test de la Messagerie
+                    </div>
+                    <div class="test-item-description">
+                        Cliquez sur l'icône de messages pour tester la composition d'emails
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title">
+                        4. Test du Menu Utilisateur
+                    </div>
+                    <div class="test-item-description">
+                        Cliquez sur le profil utilisateur pour tester la déconnexion et les liens
+                    </div>
+                </div>
+
+                <div class="test-item">
+                    <div class="test-item-title">
+                        5. Test Responsive
+                    </div>
+                    <div class="test-item-description">
+                        Redimensionnez la fenêtre pour tester l'adaptation mobile
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

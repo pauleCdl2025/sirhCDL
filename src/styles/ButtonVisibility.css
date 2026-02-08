@@ -1,0 +1,274 @@
+/* Styles globaux pour forcer la visibilité des boutons */
+/* Ce fichier s'assure que tous les boutons sont visibles en permanence */
+
+/* Règles de base pour tous les boutons */
+.btn,
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+.btn-primary,
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info,
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-success,
+.btn-outline-danger,
+.btn-outline-warning,
+.btn-outline-info {
+  /* Visibilité forcée */
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-block !important;
+  
+  /* Couleurs de base visibles */
+  color: inherit !important;
+  background-color: transparent !important;
+  border: 1px solid #ccc !important;
+  
+  /* Styles de base */
+  padding: 8px 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  
+  /* Ombre pour la visibilité */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Boutons primaires */
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background: linear-gradient(135deg, #007bff, #0056b3) !important;
+  color: white !important;
+  border-color: #007bff !important;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3) !important;
+}
+
+/* Boutons secondaires */
+.btn-secondary,
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+  background: #6c757d !important;
+  color: white !important;
+  border-color: #6c757d !important;
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3) !important;
+}
+
+/* Boutons de succès */
+.btn-success,
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  color: white !important;
+  border-color: #28a745 !important;
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3) !important;
+}
+
+/* Boutons de danger */
+.btn-danger,
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+  background: linear-gradient(135deg, #dc3545, #c82333) !important;
+  color: white !important;
+  border-color: #dc3545 !important;
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3) !important;
+}
+
+/* Boutons d'avertissement */
+.btn-warning,
+.btn-warning:hover,
+.btn-warning:focus,
+.btn-warning:active {
+  background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+  color: #212529 !important;
+  border-color: #ffc107 !important;
+  box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3) !important;
+}
+
+/* Boutons d'information */
+.btn-info,
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active {
+  background: linear-gradient(135deg, #17a2b8, #138496) !important;
+  color: white !important;
+  border-color: #17a2b8 !important;
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3) !important;
+}
+
+/* Boutons outline */
+.btn-outline-primary,
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background: transparent !important;
+  color: #007bff !important;
+  border: 2px solid #007bff !important;
+}
+
+.btn-outline-secondary,
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus,
+.btn-outline-secondary:active {
+  background: transparent !important;
+  color: #6c757d !important;
+  border: 2px solid #6c757d !important;
+}
+
+.btn-outline-success,
+.btn-outline-success:hover,
+.btn-outline-success:focus,
+.btn-outline-success:active {
+  background: transparent !important;
+  color: #28a745 !important;
+  border: 2px solid #28a745 !important;
+}
+
+.btn-outline-danger,
+.btn-outline-danger:hover,
+.btn-outline-danger:focus,
+.btn-outline-danger:active {
+  background: transparent !important;
+  color: #dc3545 !important;
+  border: 2px solid #dc3545 !important;
+}
+
+.btn-outline-warning,
+.btn-outline-warning:hover,
+.btn-outline-warning:focus,
+.btn-outline-warning:active {
+  background: transparent !important;
+  color: #ffc107 !important;
+  border: 2px solid #ffc107 !important;
+}
+
+.btn-outline-info,
+.btn-outline-info:hover,
+.btn-outline-info:focus,
+.btn-outline-info:active {
+  background: transparent !important;
+  color: #17a2b8 !important;
+  border: 2px solid #17a2b8 !important;
+}
+
+/* Boutons de groupe */
+.btn-group .btn {
+  margin: 0 2px !important;
+}
+
+/* Boutons dans les modals */
+.modal .btn {
+  margin: 0 5px !important;
+}
+
+/* Boutons dans les tableaux */
+.table .btn {
+  margin: 0 2px !important;
+}
+
+/* Boutons dans les panels */
+.panel .btn,
+.card .btn {
+  margin: 5px !important;
+}
+
+/* Boutons de fermeture */
+.btn-close {
+  background: #dc3545 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 30px !important;
+  height: 30px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+}
+
+.btn-close:hover {
+  background: #c82333 !important;
+  transform: scale(1.1) !important;
+}
+
+/* Boutons désactivés */
+.btn:disabled,
+.btn[disabled] {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  background: #6c757d !important;
+  color: #fff !important;
+}
+
+/* Boutons de petite taille */
+.btn-sm {
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+}
+
+/* Boutons de grande taille */
+.btn-lg {
+  padding: 12px 24px !important;
+  font-size: 16px !important;
+}
+
+/* Boutons avec icônes */
+.btn i,
+.btn .icon {
+  margin-right: 5px !important;
+  display: inline-block !important;
+}
+
+/* Effets de survol améliorés */
+.btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Effets de focus pour l'accessibilité */
+.btn:focus {
+  outline: 2px solid #007bff !important;
+  outline-offset: 2px !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .btn {
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+  }
+  
+  .btn-sm {
+    padding: 3px 6px !important;
+    font-size: 11px !important;
+  }
+  
+  .btn-lg {
+    padding: 10px 20px !important;
+    font-size: 15px !important;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
