@@ -42,7 +42,7 @@ const AbsenceManagement = () => {
       }),
     other_motif: Yup.string().when('motif', {
       is: 'Autre',
-      then: Yup.string().required('Veuillez préciser le motif')
+      then: () => Yup.string().required('Veuillez préciser le motif')
     })
   };
   const absenceCreateSchema = Yup.object().shape({
