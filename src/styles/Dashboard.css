@@ -537,6 +537,15 @@
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
+.welcome-image-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  color: #64748b;
+  font-size: 2.5rem;
+}
+
 .welcome-content {
   flex: 1;
 }

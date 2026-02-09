@@ -8,11 +8,6 @@ const Layout = ({ user, onLogout }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
 
-  // Debug: Log user data
-  useEffect(() => {
-    console.log('Layout - User data:', user);
-  }, [user]);
-
   useEffect(() => {
     // Handle responsive sidebar
     const handleResponsive = () => {
@@ -30,7 +25,6 @@ const Layout = ({ user, onLogout }) => {
   }, []);
 
   const toggleSidebar = () => {
-    console.log('Layout - Toggling sidebar');
     setSidebarCollapsed(!sidebarCollapsed);
   };
 

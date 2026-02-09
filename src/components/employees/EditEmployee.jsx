@@ -320,9 +320,7 @@ const EditEmployee = () => {
             };
             
             // Mettre à jour l'employé
-            console.log('📤 Données à envoyer pour mise à jour:', updateData);
             const result = await employeeService.update(id, updateData);
-            console.log('📥 Résultat de la mise à jour:', result);
             
             if (result && result.success) {
             // Rediriger vers la liste des employés

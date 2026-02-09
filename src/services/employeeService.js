@@ -50,7 +50,6 @@ const employeeService = {
   // Méthode pour récupérer tous les employés (ajoutée)
   getAll: async () => {
     try {
-      console.log('Calling getAll method');
       const response = await api.get('/employees');
       return response.data;
     } catch (error) {

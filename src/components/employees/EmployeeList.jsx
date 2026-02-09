@@ -34,38 +34,6 @@ const EmployeeList = () => {
   const [entities, setEntities] = useState([]);
   const [contractTypes, setContractTypes] = useState([]);
 
-  // Test de la fonction de décodage au chargement
-  useEffect(() => {
-    // Test des cas spécifiques de l'image
-    const testCases = [
-      'C,phora',
-      'M,decin', 
-      'gyn,cologue',
-      'Op,rateur',
-      'secr,taire',
-      'm,dicale',
-      'r,nimateur',
-      'sup,rieur',
-      'g,n,rale',
-      'Agnšs',
-      'Sosthšne',
-      'BOUNGOUERE MABE C,phora',
-      'CHITOU Bilkis Epse SANMA Folachad, AmakÈ',
-      'Equipière',
-      'Milène',
-      'AmakÈ',
-      'biologie m,dicale',
-      'C,libataire'
-    ];
-    
-    console.log('=== Test de décodage ===');
-    testCases.forEach(testCase => {
-      const decoded = decodeHtmlEntities(testCase);
-      console.log(`${testCase} -> ${decoded}`);
-    });
-    console.log('=== Fin du test ===');
-  }, []);
-
   // Données de test pour le cas où l'API n'est pas disponible
   const mockEmployees = React.useMemo(() => ([
     {
@@ -127,7 +95,6 @@ const EmployeeList = () => {
               poste_actuel: decodeHtmlEntities(emp.poste_actuel),
               entity: decodeHtmlEntities(emp.entity),
             })) : data;
-            console.log('Employees fetched from API:', data);
           } catch (apiError) {
             console.error('API error, falling back to mock data:', apiError);
             data = mockEmployees;

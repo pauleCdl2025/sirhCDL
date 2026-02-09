@@ -84,7 +84,6 @@ const ContractAlerts = () => {
         if (typeof window.AudioContext !== 'undefined' || typeof window.webkitAudioContext !== 'undefined') {
           setSoundLoaded(true);
           setAudioError(false);
-          console.log("Web Audio API supportée - Son prêt");
         } else {
           throw new Error('Web Audio API non supportée');
         }
@@ -168,7 +167,6 @@ const ContractAlerts = () => {
           // Jouer le son d'alerte directement
           const success = createAlertSound();
           if (success) {
-            console.log("Son d'alerte joué avec succès");
             setSoundPlayed(true);
           } else {
             console.warn("Impossible de jouer le son");
