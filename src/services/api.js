@@ -1106,10 +1106,17 @@ export const absenceService = {
       }
       return obj;
     };
+    const absenceUpdateFields = ['nom_employe', 'service', 'poste', 'type_absence', 'motif', 'date_debut', 'date_fin', 'date_retour', 'remuneration', 'statut'];
+    const filterPayload = (obj) => {
+      const filtered = {};
+      absenceUpdateFields.forEach(f => { if (obj[f] !== undefined) filtered[f] = obj[f]; });
+      return filtered;
+    };
     const baseURL = API_CONFIG.BASE_URL;
     const isSupabase = baseURL?.includes?.('supabase.co');
     const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
-    const payload = formDataToObject(formData);
+    const rawPayload = formDataToObject(formData);
+    const payload = filterPayload(rawPayload);
 
     try {
       const response = await api.put(`/absences/${id}`, formData, {
