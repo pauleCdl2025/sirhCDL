@@ -622,6 +622,11 @@ export const recrutementService = {
     const { obj: raw, hasFile } = formDataToObject(formData);
     const fullName = String(raw.fullName || '').trim();
     const parts = fullName ? fullName.split(/\s+/).filter(Boolean) : [];
+    const baseURL = API_CONFIG.BASE_URL;
+    const isSupabase = baseURL?.includes?.('supabase.co');
+    const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+
+    // Payload DB (colonnes Supabase)
     const payload = {
       date_modification: new Date().toISOString(),
       ...(parts.length > 0 && { nom: parts[0] || '', prenom: parts.slice(1).join(' ') || '' }),
@@ -633,11 +638,46 @@ export const recrutementService = {
       ...(raw.recruiter !== undefined && { superieur_hierarchique: raw.recruiter }),
       ...(raw.notes !== undefined && { notes: raw.notes })
     };
-    const baseURL = API_CONFIG.BASE_URL;
-    const isSupabase = baseURL?.includes?.('supabase.co');
-    const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
-    // Payload pour Edge Function (format frontend: fullName, position...)
+    const toResponse = (data) => data ? {
+      id: data.id,
+      fullName: `${(data.nom || '').trim()} ${(data.prenom || '').trim()}`.trim(),
+      position: data.poste,
+      department: data.departement,
+      source: data.motif_recrutement,
+      applicationDate: data.date_recrutement,
+      status: data.type_contrat,
+      recruiter: data.superieur_hierarchique,
+      notes: data.notes,
+      ...data
+    } : data;
+
+    // Supabase sans fichier : API REST directe en priorité (contourne Edge Function)
+    const numericId = typeof id === 'string' && id.startsWith('old_') ? id.replace('old_', '') : id;
+    if (!hasFile && isSupabase && supabaseAnonKey) {
+      try {
+        const restBase = baseURL.replace(/\/functions\/v1\/?$/, '/rest/v1');
+        const restRes = await axios.patch(
+          `${restBase}/historique_recrutement?id=eq.${numericId}`,
+          payload,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': supabaseAnonKey,
+              'Authorization': `Bearer ${supabaseAnonKey}`,
+              'Prefer': 'return=representation'
+            }
+          }
+        );
+        const data = Array.isArray(restRes.data) ? restRes.data[0] : restRes.data;
+        if (data) return toResponse(data);
+      } catch (restErr) {
+        if (restErr.response?.status !== 403 && restErr.response?.status !== 401) throw restErr;
+        // RLS bloque : on continue vers Edge Function
+      }
+    }
+
+    // Backend ou Edge Function (avec fichier, ou REST a échoué)
     const jsonPayload = {
       fullName: raw.fullName,
       position: raw.position,
@@ -650,20 +690,18 @@ export const recrutementService = {
     };
 
     try {
-      // Sans fichier : envoyer JSON (fiable pour Supabase et backend)
       if (!hasFile) {
         const response = await api.put(`/recrutements/${id}`, jsonPayload, {
           headers: { 'Content-Type': 'application/json' }
         });
         return response.data;
       }
-      // Avec fichier : FormData sans Content-Type manuel (axios ajoute le boundary)
       const response = await api.put(`/recrutements/${id}`, formData);
       return response.data;
     } catch (edgeError) {
       if (isSupabase && supabaseAnonKey && (edgeError.response?.status === 404 || edgeError.response?.status === 401)) {
         const restBase = baseURL.replace(/\/functions\/v1\/?$/, '/rest/v1');
-        const restRes = await axios.patch(`${restBase}/historique_recrutement?id=eq.${id}`, payload, {
+        const restRes = await axios.patch(`${restBase}/historique_recrutement?id=eq.${numericId}`, payload, {
           headers: {
             'Content-Type': 'application/json',
             'apikey': supabaseAnonKey,
@@ -672,18 +710,7 @@ export const recrutementService = {
           }
         });
         const data = Array.isArray(restRes.data) ? restRes.data[0] : restRes.data;
-        return data ? {
-          id: data.id,
-          fullName: `${(data.nom || '').trim()} ${(data.prenom || '').trim()}`.trim(),
-          position: data.poste,
-          department: data.departement,
-          source: data.motif_recrutement,
-          applicationDate: data.date_recrutement,
-          status: data.type_contrat,
-          recruiter: data.superieur_hierarchique,
-          notes: data.notes,
-          ...data
-        } : data;
+        return toResponse(data);
       }
       throw edgeError;
     }
