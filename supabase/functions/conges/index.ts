@@ -148,6 +148,82 @@ serve(async (req) => {
       });
     }
 
+    // PUT /conges/:id - Mettre à jour un congé
+    if (req.method === "PUT" && segments[0] && /^\d+$/.test(segments[0])) {
+      const congeId = parseInt(segments[0], 10);
+      const contentType = req.headers.get("content-type") || "";
+      let body: Record<string, unknown> = {};
+
+      try {
+        if (contentType.includes("application/json")) {
+          body = await req.json() as Record<string, unknown>;
+        } else if (contentType.includes("multipart/form-data")) {
+          const formData = await req.formData();
+          for (const [key, value] of formData.entries()) {
+            if (value instanceof File) continue;
+            body[key] = value;
+          }
+        } else {
+          body = await req.json() as Record<string, unknown>;
+        }
+      } catch {
+        return new Response(JSON.stringify({ error: "Invalid request body" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const updateFields: Record<string, unknown> = {};
+      const allowedFields = [
+        "nom_employe", "service", "poste", "date_embauche", "jours_conges_annuels",
+        "date_demande", "date_debut", "date_fin", "motif", "date_retour",
+        "jours_pris", "jours_restants", "type_conge", "statut"
+      ];
+
+      for (const field of allowedFields) {
+        if (body[field] !== undefined) {
+          if (field.includes("jours") && body[field] !== null && body[field] !== "") {
+            updateFields[field] = parseInt(String(body[field]), 10);
+          } else {
+            updateFields[field] = body[field];
+          }
+        }
+      }
+
+      if (Object.keys(updateFields).length === 0) {
+        return new Response(JSON.stringify({ error: "No valid fields to update" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { data, error } = await supabase
+        .from("conges")
+        .update(updateFields)
+        .eq("id", congeId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Update conge error:", error);
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      if (!data) {
+        return new Response(JSON.stringify({ error: "Conge not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response(JSON.stringify(data), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: "Not found" }), {
       status: 404,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -124,16 +124,38 @@ export const congeService = {
   
   // Mettre à jour un congé
   update: async (id, congeData) => {
+    const formDataToObject = (fd) => {
+      const obj = {};
+      for (const [key, value] of fd.entries()) {
+        if (value instanceof File) continue;
+        obj[key] = value;
+      }
+      return obj;
+    };
+    const payload = congeData instanceof FormData ? formDataToObject(congeData) : congeData;
+
     try {
-      // Si c'est FormData, ne pas définir Content-Type (laissé au navigateur)
       const config = congeData instanceof FormData ? {} : {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       };
-      
-      const response = await api.put(`/conges/${id}`, congeData, config);
-      return response.data;
+      try {
+        const response = await api.put(`/conges/${id}`, congeData, config);
+        return response.data;
+      } catch (edgeError) {
+        if (isSupabase && SUPABASE_ANON_KEY && edgeError.response?.status === 404) {
+          const restBase = API_URL.replace(/\/functions\/v1\/?$/, '/rest/v1');
+          const restRes = await axios.patch(`${restBase}/conges?id=eq.${id}`, payload, {
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Prefer': 'return=representation'
+            }
+          });
+          return Array.isArray(restRes.data) ? restRes.data[0] : restRes.data;
+        }
+        throw edgeError;
+      }
     } catch (error) {
       console.error(`Error updating conge ${id}:`, error);
       throw error;

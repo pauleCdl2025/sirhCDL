@@ -1160,10 +1160,10 @@ const MedicalVisits = () => {
                 <div className="avatar-circle avatar-lg mx-auto mb-2" style={{
                   backgroundColor: `hsl(${((selectedVisite.nom || '').charCodeAt(0) || 0) * 10}, 70%, 60%)`,
                 }}>
-                  {(selectedVisite.nom || '').charAt(0)}{(selectedVisite.prenom || '').charAt(0)}
+                  {selectedVisite.nom?.charAt(0)}{selectedVisite.prenom?.charAt(0)}
                 </div>
-                <h4>{selectedVisite.nom || '-'} {selectedVisite.prenom || ''}</h4>
-                <p className="text-muted mb-0">{selectedVisite.poste || '-'}</p>
+                <h4>{selectedVisite.nom} {selectedVisite.prenom}</h4>
+                <p className="text-muted mb-0">{selectedVisite.poste}</p>
               </div>
               
               <div className="row mb-4">
