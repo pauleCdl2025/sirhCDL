@@ -609,13 +609,17 @@ export const recrutementService = {
   update: async (id, formData) => {
     const formDataToObject = (fd) => {
       const obj = {};
+      let hasFile = false;
       for (const [key, value] of fd.entries()) {
-        if (value instanceof File) continue;
+        if (value instanceof File) {
+          hasFile = true;
+          continue;
+        }
         obj[key] = value;
       }
-      return obj;
+      return { obj, hasFile };
     };
-    const raw = formDataToObject(formData);
+    const { obj: raw, hasFile } = formDataToObject(formData);
     const fullName = String(raw.fullName || '').trim();
     const parts = fullName ? fullName.split(/\s+/).filter(Boolean) : [];
     const payload = {
@@ -633,10 +637,28 @@ export const recrutementService = {
     const isSupabase = baseURL?.includes?.('supabase.co');
     const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
+    // Payload pour Edge Function (format frontend: fullName, position...)
+    const jsonPayload = {
+      fullName: raw.fullName,
+      position: raw.position,
+      department: raw.department,
+      source: raw.source,
+      applicationDate: raw.applicationDate,
+      status: raw.status,
+      recruiter: raw.recruiter,
+      notes: raw.notes
+    };
+
     try {
-      const response = await api.put(`/recrutements/${id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      // Sans fichier : envoyer JSON (plus fiable pour Supabase Edge Function)
+      if (!hasFile && isSupabase) {
+        const response = await api.put(`/recrutements/${id}`, jsonPayload, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+        return response.data;
+      }
+      // Avec fichier : FormData sans Content-Type manuel (axios ajoute le boundary)
+      const response = await api.put(`/recrutements/${id}`, formData);
       return response.data;
     } catch (edgeError) {
       if (isSupabase && supabaseAnonKey && (edgeError.response?.status === 404 || edgeError.response?.status === 401)) {
