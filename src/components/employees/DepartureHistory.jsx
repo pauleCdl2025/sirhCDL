@@ -369,7 +369,10 @@ const DepartureHistory = () => {
         departure = departures.find(d => d.id === id || d.id === parseInt(id, 10));
         if (!departure) throw apiError;
       }
-      setSelectedDeparture(departure);
+      // Fusionner avec l'item de la liste si des champs manquent
+      const fromList = departures.find(d => d.id === id || d.id === parseInt(String(id).replace(/^(new_|old_)/, ''), 10));
+      const merged = fromList ? { ...fromList, ...departure, id: departure.id ?? id } : departure;
+      setSelectedDeparture(merged);
       setShowEditModal(true);
     } catch (error) {
       console.error('Erreur lors de la récupération des détails du départ:', error);
