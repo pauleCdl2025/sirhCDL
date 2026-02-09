@@ -1098,13 +1098,39 @@ export const absenceService = {
   
   // Mettre à jour une absence
   update: async (id, formData) => {
-    // Utiliser FormData pour permettre l'upload de fichiers
-    const response = await api.put(`/absences/${id}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
+    const formDataToObject = (fd) => {
+      const obj = {};
+      for (const [key, value] of fd.entries()) {
+        if (value instanceof File) continue;
+        obj[key] = value;
       }
-    });
-    return response.data;
+      return obj;
+    };
+    const baseURL = API_CONFIG.BASE_URL;
+    const isSupabase = baseURL?.includes?.('supabase.co');
+    const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+    const payload = formDataToObject(formData);
+
+    try {
+      const response = await api.put(`/absences/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      return response.data;
+    } catch (edgeError) {
+      if (isSupabase && supabaseAnonKey && edgeError.response?.status === 404) {
+        const restBase = baseURL.replace(/\/functions\/v1\/?$/, '/rest/v1');
+        const restRes = await axios.patch(`${restBase}/absence?id=eq.${id}`, payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': supabaseAnonKey,
+            'Authorization': `Bearer ${supabaseAnonKey}`,
+            'Prefer': 'return=representation'
+          }
+        });
+        return Array.isArray(restRes.data) ? restRes.data[0] : restRes.data;
+      }
+      throw edgeError;
+    }
   },
   
   // Traiter une absence (approuver/refuser)

@@ -144,6 +144,75 @@ serve(async (req) => {
       });
     }
 
+    // PUT /absences/:id - Mettre à jour une absence
+    if (req.method === "PUT" && segments[0] && /^\d+$/.test(segments[0])) {
+      const absenceId = parseInt(segments[0], 10);
+      const contentType = req.headers.get("content-type") || "";
+      let body: Record<string, unknown> = {};
+
+      try {
+        if (contentType.includes("application/json")) {
+          body = await req.json() as Record<string, unknown>;
+        } else if (contentType.includes("multipart/form-data")) {
+          const formData = await req.formData();
+          for (const [key, value] of formData.entries()) {
+            if (value instanceof File) continue;
+            body[key] = value;
+          }
+        } else {
+          body = await req.json() as Record<string, unknown>;
+        }
+      } catch {
+        return new Response(JSON.stringify({ error: "Invalid request body" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const updateFields: Record<string, unknown> = {};
+      const allowedFields = [
+        "nom_employe", "service", "poste", "type_absence", "motif",
+        "date_debut", "date_fin", "date_retour", "remuneration", "statut"
+      ];
+
+      for (const field of allowedFields) {
+        if (body[field] !== undefined) updateFields[field] = body[field];
+      }
+
+      if (Object.keys(updateFields).length === 0) {
+        return new Response(JSON.stringify({ error: "No valid fields to update" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { data, error } = await supabase
+        .from("absence")
+        .update(updateFields)
+        .eq("id", absenceId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Update absence error:", error);
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      if (!data) {
+        return new Response(JSON.stringify({ error: "Absence not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response(JSON.stringify(data), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: "Not found" }), {
       status: 404,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
