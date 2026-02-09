@@ -113,16 +113,34 @@ const employeeService = {
   // Mettre à jour un employé
   update: async (id, employeeData) => {
     try {
-      // Utiliser formDataApi si employeeData est une instance de FormData
       const isFormData = employeeData instanceof FormData;
       const apiToUse = isFormData ? formDataApi : api;
-      
-      const response = await apiToUse.put(`/employees/${id}`, employeeData);
-      return { success: true, data: response.data };
+
+      try {
+        const response = await apiToUse.put(`/employees/${id}`, employeeData);
+        return { success: true, data: response.data };
+      } catch (edgeError) {
+        // Fallback: Edge Function 404 → utiliser l'API REST Supabase directement
+        if (isSupabase && SUPABASE_ANON_KEY && !isFormData && edgeError.response?.status === 404) {
+          const restBase = API_URL.replace(/\/functions\/v1\/?$/, '/rest/v1');
+          const restUrl = `${restBase}/employees?id=eq.${id}`;
+          const restRes = await axios.patch(restUrl, employeeData, {
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Prefer': 'return=representation'
+            }
+          });
+          const data = Array.isArray(restRes.data) ? restRes.data[0] : restRes.data;
+          return { success: true, data };
+        }
+        throw edgeError;
+      }
     } catch (error) {
       console.error(`Error updating employee ${id}:`, error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: error.response?.data?.error || 'Une erreur est survenue lors de la mise à jour de l\'employé',
         details: error.response?.data?.details || error.message
       };

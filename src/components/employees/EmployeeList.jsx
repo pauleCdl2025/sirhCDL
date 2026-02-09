@@ -80,8 +80,6 @@ const EmployeeList = () => {
       setIsLoading(true);
       setError(null);
       try {
-        console.log('Fetching employees...');
-        
         let data = [];
         
         // Try to use the API service if available

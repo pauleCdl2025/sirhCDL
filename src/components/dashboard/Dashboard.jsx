@@ -5,14 +5,11 @@ import { usePendingRequestsCount } from '../../hooks/usePendingRequestsCount';
 import EventsComponent from '../common/EventsComponent';
 import '../../styles/Dashboard.css';
 
-const CLOUDINARY_WELCOME_IMG = 'https://res.cloudinary.com/dd64mwkl2/image/upload/v1725893934/flat-lay-minimalistic-geometrical-figures-with-copy-space_1_rmazpl.jpg';
-
 const Dashboard = () => {
   const [notes, setNotes] = useState([]);
   const [events, setEvents] = useState([]);
   const [loadingNotes, setLoadingNotes] = useState(true);
   const [notesError, setNotesError] = useState(null);
-  const [welcomeImgError, setWelcomeImgError] = useState(false);
   const { pendingCount } = usePendingRequestsCount();
 
   useEffect(() => {
@@ -323,18 +320,9 @@ const Dashboard = () => {
           </div>
           <div className="card-body">
             <div className="welcome-wrapper">
-              {welcomeImgError ? (
-                <div className="welcome-image welcome-image-fallback" aria-hidden="true">
-                  <i className="fas fa-briefcase"></i>
-                </div>
-              ) : (
-                <img 
-                  src={CLOUDINARY_WELCOME_IMG} 
-                  alt="Welcome" 
-                  className="welcome-image"
-                  onError={() => setWelcomeImgError(true)}
-                />
-              )}
+              <div className="welcome-image welcome-image-fallback" aria-hidden="true">
+                <i className="fas fa-briefcase"></i>
+              </div>
               
               <div className="welcome-content">
                 <h4 className="welcome-title">Bienvenue sur votre espace !</h4>
