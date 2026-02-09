@@ -29,9 +29,10 @@ const AbsenceManagement = () => {
   const [filterDateStart, setFilterDateStart] = useState('');
   const [filterDateEnd, setFilterDateEnd] = useState('');
 
-  // Validation schema for absence form
+  // Validation schema for absence form (create: employee, edit: nom_employe)
   const absenceSchema = Yup.object().shape({
-    employee: Yup.string().required('L\'employé est requis'),
+    employee: Yup.string().when('nom_employe', { is: (v) => !v || v === '', then: (s) => s.required('L\'employé est requis'), otherwise: (s) => s.notRequired() }),
+    nom_employe: Yup.string().when('employee', { is: (v) => !v || v === '', then: (s) => s.required('L\'employé est requis'), otherwise: (s) => s.notRequired() }),
     type_absence: Yup.string().required('Le type d\'absence est requis'),
     motif: Yup.string().required('Le motif est requis'),
     date_debut: Yup.string().required('La date de début est requise'),
@@ -238,11 +239,13 @@ const AbsenceManagement = () => {
       setIsLoading(true);
       setError(null);
       
+      const listAbsence = absences.find(a => a.id === id || a.id === parseInt(id, 10));
       let absence;
       try {
-        absence = await absenceService.getById(id);
+        const apiAbsence = await absenceService.getById(id);
+        absence = listAbsence ? { ...listAbsence, ...apiAbsence } : apiAbsence;
       } catch (apiError) {
-        absence = absences.find(a => a.id === id || a.id === parseInt(id, 10));
+        absence = listAbsence;
         if (!absence) throw apiError;
       }
       
@@ -1357,17 +1360,19 @@ const AbsenceManagement = () => {
             </div>
             <div className="modal-body">
               <Formik
+                key={selectedAbsence.id}
+                enableReinitialize
                 initialValues={{
                   id: selectedAbsence.id,
-                  nom_employe: selectedAbsence.nom_employe,
+                  nom_employe: selectedAbsence.nom_employe || '',
                   service: selectedAbsence.service || '',
                   poste: selectedAbsence.poste || '',
-                  type_absence: selectedAbsence.type_absence,
-                  motif: selectedAbsence.motif,
+                  type_absence: selectedAbsence.type_absence || '',
+                  motif: selectedAbsence.motif || '',
                   other_motif: selectedAbsence.other_motif || '',
-                  date_debut: selectedAbsence.date_debut,
-                  date_fin: selectedAbsence.date_fin,
-                  date_retour: selectedAbsence.date_retour || '',
+                  date_debut: selectedAbsence.date_debut ? String(selectedAbsence.date_debut).split('T')[0] : '',
+                  date_fin: selectedAbsence.date_fin ? String(selectedAbsence.date_fin).split('T')[0] : '',
+                  date_retour: selectedAbsence.date_retour ? String(selectedAbsence.date_retour).split('T')[0] : '',
                   remuneration: selectedAbsence.remuneration || '',
                   statut: selectedAbsence.statut || 'En attente',
                   document: null,

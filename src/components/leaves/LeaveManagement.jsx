@@ -303,11 +303,13 @@ const LeaveManagement = () => {
   // Ouvrir le modal de modification
   const openEditModal = async (id) => {
     try {
+      const listConge = conges.find(c => c.id === id || c.id === parseInt(id, 10));
       let conge;
       try {
-        conge = await congeService.getById(id);
+        const apiConge = await congeService.getById(id);
+        conge = listConge ? { ...listConge, ...apiConge } : apiConge;
       } catch (apiError) {
-        conge = conges.find(c => c.id === id || c.id === parseInt(id, 10));
+        conge = listConge;
         if (!conge) throw apiError;
       }
       setEditingConge(conge);
@@ -1463,15 +1465,17 @@ const LeaveManagement = () => {
               )}
               
               <Formik
+                key={editingConge.id}
+                enableReinitialize
                 initialValues={{
                   nom_employe: editingConge.nom_employe || '',
                   service: editingConge.service || '',
                   poste: editingConge.poste || '',
-                  date_embauche: editingConge.date_embauche || '',
-                  jours_conges_annuels: editingConge.jours_conges_annuels || 30,
-                  date_debut: editingConge.date_debut ? editingConge.date_debut.split('T')[0] : '',
-                  date_fin: editingConge.date_fin ? editingConge.date_fin.split('T')[0] : '',
-                  date_retour: editingConge.date_retour ? editingConge.date_retour.split('T')[0] : '',
+                  date_embauche: editingConge.date_embauche ? String(editingConge.date_embauche).split('T')[0] : '',
+                  jours_conges_annuels: editingConge.jours_conges_annuels ?? 30,
+                  date_debut: editingConge.date_debut ? String(editingConge.date_debut).split('T')[0] : '',
+                  date_fin: editingConge.date_fin ? String(editingConge.date_fin).split('T')[0] : '',
+                  date_retour: editingConge.date_retour ? String(editingConge.date_retour).split('T')[0] : '',
                   motif: editingConge.motif || '',
                   type_conge: editingConge.type_conge || 'Congé payé'
                 }}
