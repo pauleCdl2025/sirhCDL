@@ -229,7 +229,7 @@ const RecruitmentHistory = () => {
       formData.append('keep_cv', values.keep_cv ? 'true' : 'false');
       
       // Send data to API
-      const response = await recrutementService.update(values.id, formData);
+      await recrutementService.update(values.id, formData);
       
       // Rafraîchir la liste depuis le serveur pour afficher les données à jour
       await fetchRecruitments();
