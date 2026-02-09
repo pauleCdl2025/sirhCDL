@@ -25,7 +25,6 @@ const Layout = ({ user, onLogout }) => {
   }, []);
 
   const toggleSidebar = () => {
-    console.log('Layout - Toggling sidebar');
     setSidebarCollapsed(!sidebarCollapsed);
   };
 

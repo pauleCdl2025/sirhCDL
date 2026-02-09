@@ -472,28 +472,7 @@ export const visiteMedicaleService = {
   // Récupérer toutes les visites médicales
   getAll: async () => {
     try {
-      console.log('FRONTEND: Appel à API getAll');
-      const startTime = performance.now();
-      
       const response = await api.get('/visites-medicales');
-      
-      const endTime = performance.now();
-      console.log(`FRONTEND: getAll a pris ${endTime - startTime}ms`);
-      console.log('FRONTEND: Données reçues:', response.data.length, 'visites');
-      
-      if (response.data.length > 0) {
-        console.log('FRONTEND: Premier enregistrement:', response.data[0]);
-        
-        // Vérifier les statuts distincts
-        const statuts = [...new Set(response.data.map(r => r.statut))];
-        console.log('FRONTEND: Statuts présents dans les données:', statuts);
-        
-        // Vérifier les formats de dates
-        const firstVisit = response.data[0];
-        console.log('FRONTEND: Format de date_derniere_visite:', firstVisit.date_derniere_visite);
-        console.log('FRONTEND: Format de date_prochaine_visite:', firstVisit.date_prochaine_visite);
-      }
-      
       return response.data;
     } catch (error) {
       console.error('FRONTEND: Erreur dans getAll:', error);
@@ -571,15 +550,7 @@ export const visiteMedicaleService = {
  // Récupérer les statistiques
  getStatistics: async () => {
   try {
-    console.log('FRONTEND: Appel à API getStatistics');
-    const startTime = performance.now();
-    
     const response = await api.get('/visites-medicales/stats/overview');
-    
-    const endTime = performance.now();
-    console.log(`FRONTEND: getStatistics a pris ${endTime - startTime}ms`);
-    console.log('FRONTEND: Statistiques reçues:', response.data);
-    
     return response.data;
   } catch (error) {
     console.error('FRONTEND: Erreur dans getStatistics:', error);
@@ -1170,7 +1141,6 @@ export const searchService = {
   async search(query) {
     try {
       // Simulate API call - replace with actual API endpoint
-      console.log('Searching for:', query);
       
       // Mock search results - replace with actual API call
       const mockResults = [

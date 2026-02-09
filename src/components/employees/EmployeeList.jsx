@@ -159,12 +159,6 @@ const EmployeeList = () => {
     if (!employees.length) return;
 
     const filtered = employees.filter(employee => {
-      // Debug: Log the original data
-      if (employee.nom_prenom && (employee.nom_prenom.includes('š') || employee.nom_prenom.includes(','))) {
-        console.log('Debug - Original nom_prenom:', employee.nom_prenom);
-        console.log('Debug - Decoded nom_prenom:', decodeHtmlEntities(employee.nom_prenom));
-      }
-      
       // Search query - apply decoding for search as well
       const searchMatch = searchQuery === '' || 
           (employee.nom_prenom && decodeHtmlEntities(employee.nom_prenom).toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -267,7 +261,6 @@ const EmployeeList = () => {
 
   // Handle send email
   const handleSendEmail = (emailData) => {
-    console.log('Sending email:', emailData);
     // In a real app, this would send the email via an API
     alert(`Email envoyé à ${emailData.to}`);
     setShowEmailModal(false);

@@ -177,10 +177,8 @@ export const testDecode = () => {
     'C,libataire'
   ];
   
-  console.log('=== Test de décodage ===');
+  // testDecode: utility for manual debugging only, no console output by default
   testCases.forEach(testCase => {
-    const decoded = decodeHtmlEntities(testCase);
-    console.log(`${testCase} -> ${decoded}`);
+    decodeHtmlEntities(testCase);
   });
-  console.log('=== Fin du test ===');
 };
