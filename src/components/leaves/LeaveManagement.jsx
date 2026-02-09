@@ -35,17 +35,20 @@ const LeaveManagement = () => {
     nom_employe: Yup.string().required('L\'employé est requis'),
     service: Yup.string().required('Le service est requis'),
     type_conge: Yup.string().required('Le type de congé est requis'),
-    date_debut: Yup.date().required('La date de début est requise'),
-    date_fin: Yup.date().required('La date de fin est requise')
-      .min(
-        Yup.ref('date_debut'), 
-        'La date de fin doit être postérieure à la date de début'
-      ),
-    date_retour: Yup.date()
-      .min(
-        Yup.ref('date_fin'),
-        'La date de retour doit être postérieure à la date de fin'
-      ),
+    date_debut: Yup.string().required('La date de début est requise'),
+    date_fin: Yup.string()
+      .required('La date de fin est requise')
+      .test('min-date', 'La date de fin doit être postérieure ou égale à la date de début', function(value) {
+        const { date_debut } = this.parent;
+        if (!value || !date_debut) return true;
+        return value >= date_debut;
+      }),
+    date_retour: Yup.string()
+      .test('min-date', 'La date de retour doit être postérieure à la date de fin', function(value) {
+        const { date_fin } = this.parent;
+        if (!value || !date_fin) return true;
+        return value > date_fin;
+      }),
     motif: Yup.string().when('type_conge', {
       is: (val) => val === 'Maladie' || val === 'Congé sans solde' || val === 'Congé exceptionnel',
       then: () => Yup.string().required('Le motif est requis pour ce type de congé')

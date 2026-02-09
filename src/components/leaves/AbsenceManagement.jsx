@@ -34,13 +34,14 @@ const AbsenceManagement = () => {
     employee: Yup.string().required('L\'employé est requis'),
     type_absence: Yup.string().required('Le type d\'absence est requis'),
     motif: Yup.string().required('Le motif est requis'),
-    date_debut: Yup.date().required('La date de début est requise'),
-    date_fin: Yup.date()
+    date_debut: Yup.string().required('La date de début est requise'),
+    date_fin: Yup.string()
       .required('La date de fin est requise')
-      .min(
-        Yup.ref('date_debut'), 
-        'La date de fin doit être postérieure à la date de début'
-      ),
+      .test('min-date', 'La date de fin doit être postérieure ou égale à la date de début', function(value) {
+        const { date_debut } = this.parent;
+        if (!value || !date_debut) return true;
+        return value >= date_debut;
+      }),
     other_motif: Yup.string().when('motif', {
       is: 'Autre',
       then: Yup.string().required('Veuillez préciser le motif')
