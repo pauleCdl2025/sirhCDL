@@ -1109,7 +1109,12 @@ export const absenceService = {
     const absenceUpdateFields = ['nom_employe', 'service', 'poste', 'type_absence', 'motif', 'date_debut', 'date_fin', 'date_retour', 'remuneration', 'statut'];
     const filterPayload = (obj) => {
       const filtered = {};
-      absenceUpdateFields.forEach(f => { if (obj[f] !== undefined) filtered[f] = obj[f]; });
+      absenceUpdateFields.forEach(f => {
+        if (obj[f] === undefined) return;
+        let val = obj[f];
+        if (val === '' && !['nom_employe', 'date_debut', 'date_fin', 'statut'].includes(f)) val = null;
+        filtered[f] = val;
+      });
       return filtered;
     };
     const baseURL = API_CONFIG.BASE_URL;

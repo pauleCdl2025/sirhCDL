@@ -130,7 +130,6 @@ const AbsenceManagement = () => {
     try {
       // Fetch employees data
       const employeesData = await employeeService.getAll();
-      console.log('Données des employés reçues:', employeesData);
       
       if (Array.isArray(employeesData) && employeesData.length > 0) {
         // Format employee data for dropdown
@@ -142,7 +141,6 @@ const AbsenceManagement = () => {
         }));
         
         setEmployees(formattedEmployees);
-        console.log('Employés formatés:', formattedEmployees);
       } else {
         throw new Error('Format de données employés invalide ou vide');
       }
