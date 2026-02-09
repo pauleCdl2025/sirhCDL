@@ -165,8 +165,19 @@ export const congeService = {
   // Approuver un congé
   approve: async (id) => {
     try {
-      const response = await api.put(`/conges/${id}/approve`, {});
-      return response.data;
+      try {
+        const response = await api.put(`/conges/${id}/approve`, {});
+        return response.data;
+      } catch (edgeError) {
+        if (isSupabase && SUPABASE_ANON_KEY && edgeError.response?.status === 404) {
+          const restBase = API_URL.replace(/\/functions\/v1\/?$/, '/rest/v1');
+          const restRes = await axios.patch(`${restBase}/conges?id=eq.${id}`, { statut: 'Approuvé', date_traitement: new Date().toISOString() }, {
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' }
+          });
+          return Array.isArray(restRes.data) ? restRes.data[0] : restRes.data;
+        }
+        throw edgeError;
+      }
     } catch (error) {
       console.error(`Error approving conge ${id}:`, error);
       throw error;
@@ -176,8 +187,21 @@ export const congeService = {
   // Refuser un congé
   reject: async (id, motif_refus) => {
     try {
-      const response = await api.put(`/conges/${id}/reject`, { motif_refus });
-      return response.data;
+      try {
+        const response = await api.put(`/conges/${id}/reject`, { motif_refus });
+        return response.data;
+      } catch (edgeError) {
+        if (isSupabase && SUPABASE_ANON_KEY && edgeError.response?.status === 404) {
+          const restBase = API_URL.replace(/\/functions\/v1\/?$/, '/rest/v1');
+          const payload = { statut: 'Refusé', date_traitement: new Date().toISOString() };
+          if (motif_refus) payload.motif = motif_refus;
+          const restRes = await axios.patch(`${restBase}/conges?id=eq.${id}`, payload, {
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' }
+          });
+          return Array.isArray(restRes.data) ? restRes.data[0] : restRes.data;
+        }
+        throw edgeError;
+      }
     } catch (error) {
       console.error(`Error rejecting conge ${id}:`, error);
       throw error;

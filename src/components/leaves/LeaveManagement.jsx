@@ -105,7 +105,6 @@ const LeaveManagement = () => {
   const fetchEmployees = useCallback(async () => {
     try {
       const employeesData = await employeeService.getAll();
-      console.log('Données des employés reçues:', employeesData);
       
       // Vérifier si les données des employés ont été correctement récupérées
       if (Array.isArray(employeesData) && employeesData.length > 0) {

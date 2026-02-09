@@ -148,8 +148,8 @@ serve(async (req) => {
       });
     }
 
-    // PUT /conges/:id - Mettre à jour un congé
-    if (req.method === "PUT" && segments[0] && /^\d+$/.test(segments[0])) {
+    // PUT /conges/:id - Mettre à jour un congé (exclure approve/reject)
+    if (req.method === "PUT" && segments[0] && /^\d+$/.test(segments[0]) && segments[1] !== "approve" && segments[1] !== "reject") {
       const congeId = parseInt(segments[0], 10);
       const contentType = req.headers.get("content-type") || "";
       let body: Record<string, unknown> = {};
@@ -219,6 +219,75 @@ serve(async (req) => {
         });
       }
 
+      return new Response(JSON.stringify(data), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // PUT /conges/:id/approve - Approuver un congé
+    if (req.method === "PUT" && segments[0] && /^\d+$/.test(segments[0]) && segments[1] === "approve") {
+      const congeId = parseInt(segments[0], 10);
+      const { data, error } = await supabase
+        .from("conges")
+        .update({ statut: "Approuvé", date_traitement: new Date().toISOString() })
+        .eq("id", congeId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Approve conge error:", error);
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!data) {
+        return new Response(JSON.stringify({ error: "Conge not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return new Response(JSON.stringify(data), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // PUT /conges/:id/reject - Refuser un congé
+    if (req.method === "PUT" && segments[0] && /^\d+$/.test(segments[0]) && segments[1] === "reject") {
+      const congeId = parseInt(segments[0], 10);
+      let body: Record<string, unknown> = {};
+      try {
+        body = await req.json() as Record<string, unknown>;
+      } catch {
+        body = {};
+      }
+      const motifRefus = body.motif_refus as string || "";
+      const updateData: Record<string, unknown> = {
+        statut: "Refusé",
+        date_traitement: new Date().toISOString(),
+      };
+      if (motifRefus) updateData.motif = motifRefus;
+
+      const { data, error } = await supabase
+        .from("conges")
+        .update(updateData)
+        .eq("id", congeId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Reject conge error:", error);
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!data) {
+        return new Response(JSON.stringify({ error: "Conge not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
       return new Response(JSON.stringify(data), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
