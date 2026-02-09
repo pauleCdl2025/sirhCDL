@@ -650,8 +650,8 @@ export const recrutementService = {
     };
 
     try {
-      // Sans fichier : envoyer JSON (plus fiable pour Supabase Edge Function)
-      if (!hasFile && isSupabase) {
+      // Sans fichier : envoyer JSON (fiable pour Supabase et backend)
+      if (!hasFile) {
         const response = await api.put(`/recrutements/${id}`, jsonPayload, {
           headers: { 'Content-Type': 'application/json' }
         });
