@@ -29,10 +29,7 @@ const AbsenceManagement = () => {
   const [filterDateStart, setFilterDateStart] = useState('');
   const [filterDateEnd, setFilterDateEnd] = useState('');
 
-  // Validation schema for absence form (create: employee, edit: nom_employe)
-  const absenceSchema = Yup.object().shape({
-    employee: Yup.string().when('nom_employe', { is: (v) => !v || v === '', then: (s) => s.required('L\'employé est requis'), otherwise: (s) => s.notRequired() }),
-    nom_employe: Yup.string().when('employee', { is: (v) => !v || v === '', then: (s) => s.required('L\'employé est requis'), otherwise: (s) => s.notRequired() }),
+  const baseAbsenceFields = {
     type_absence: Yup.string().required('Le type d\'absence est requis'),
     motif: Yup.string().required('Le motif est requis'),
     date_debut: Yup.string().required('La date de début est requise'),
@@ -47,6 +44,14 @@ const AbsenceManagement = () => {
       is: 'Autre',
       then: Yup.string().required('Veuillez préciser le motif')
     })
+  };
+  const absenceCreateSchema = Yup.object().shape({
+    employee: Yup.string().required('L\'employé est requis'),
+    ...baseAbsenceFields
+  });
+  const absenceEditSchema = Yup.object().shape({
+    nom_employe: Yup.string().required('L\'employé est requis'),
+    ...baseAbsenceFields
   });
 
   // Services list
@@ -941,7 +946,7 @@ const AbsenceManagement = () => {
                   remuneration: '',
                   document: null
                 }}
-                validationSchema={absenceSchema}
+                validationSchema={absenceCreateSchema}
                 onSubmit={handleSubmit}
               >
                 {({ errors, touched, values, setFieldValue, isValid, dirty }) => (
@@ -1379,7 +1384,7 @@ const AbsenceManagement = () => {
                   keep_document: selectedAbsence.document_path ? true : false
                 }}
                 onSubmit={handleUpdateAbsence}
-                validationSchema={absenceSchema}
+                validationSchema={absenceEditSchema}
               >
                 {({ errors, touched, values, setFieldValue, isValid, dirty }) => (
                   <Form>
