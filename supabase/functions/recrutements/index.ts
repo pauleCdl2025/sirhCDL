@@ -57,6 +57,71 @@ serve(async (req) => {
       return new Response(JSON.stringify(mapRecruitment(data)), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    // PUT /recrutements/:id - Mettre à jour un recrutement
+    if (req.method === "PUT" && segments[0] && /^\d+$/.test(segments[0])) {
+      const recruitmentId = parseInt(segments[0], 10);
+      const contentType = req.headers.get("content-type") || "";
+      let body: Record<string, unknown> = {};
+
+      try {
+        if (contentType.includes("application/json")) {
+          body = await req.json() as Record<string, unknown>;
+        } else if (contentType.includes("multipart/form-data")) {
+          const formData = await req.formData();
+          for (const [key, value] of formData.entries()) {
+            if (value instanceof File) continue;
+            body[key] = value;
+          }
+        } else {
+          body = await req.json() as Record<string, unknown>;
+        }
+      } catch {
+        return new Response(JSON.stringify({ error: "Invalid request body" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const updateFields: Record<string, unknown> = {
+        date_modification: new Date().toISOString(),
+      };
+
+      const fullName = String(body.fullName || "").trim();
+      if (fullName) {
+        const parts = fullName.split(/\s+/).filter(Boolean);
+        updateFields.nom = parts[0] || "";
+        updateFields.prenom = parts.slice(1).join(" ") || "";
+      }
+      if (body.position !== undefined) updateFields.poste = body.position;
+      if (body.department !== undefined) updateFields.departement = body.department;
+      if (body.source !== undefined) updateFields.motif_recrutement = body.source;
+      if (body.applicationDate !== undefined) updateFields.date_recrutement = body.applicationDate;
+      if (body.status !== undefined) updateFields.type_contrat = body.status;
+      if (body.recruiter !== undefined) updateFields.superieur_hierarchique = body.recruiter;
+      if (body.notes !== undefined) updateFields.notes = body.notes;
+
+      const { data, error } = await supabase
+        .from("historique_recrutement")
+        .update(updateFields)
+        .eq("id", recruitmentId)
+        .select()
+        .single();
+
+      if (error) {
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!data) {
+        return new Response(JSON.stringify({ error: "Recruitment not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return new Response(JSON.stringify(mapRecruitment(data)), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     // GET /recrutements - Liste
     const { data, error } = await supabase.from("historique_recrutement").select("*").order("id", { ascending: false });
     if (error) throw error;

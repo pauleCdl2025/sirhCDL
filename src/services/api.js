@@ -607,17 +607,63 @@ export const recrutementService = {
   
   // Mettre à jour un recrutement
   update: async (id, formData) => {
+    const formDataToObject = (fd) => {
+      const obj = {};
+      for (const [key, value] of fd.entries()) {
+        if (value instanceof File) continue;
+        obj[key] = value;
+      }
+      return obj;
+    };
+    const raw = formDataToObject(formData);
+    const fullName = String(raw.fullName || '').trim();
+    const parts = fullName ? fullName.split(/\s+/).filter(Boolean) : [];
+    const payload = {
+      date_modification: new Date().toISOString(),
+      ...(parts.length > 0 && { nom: parts[0] || '', prenom: parts.slice(1).join(' ') || '' }),
+      ...(raw.position !== undefined && { poste: raw.position }),
+      ...(raw.department !== undefined && { departement: raw.department }),
+      ...(raw.source !== undefined && { motif_recrutement: raw.source }),
+      ...(raw.applicationDate !== undefined && { date_recrutement: raw.applicationDate }),
+      ...(raw.status !== undefined && { type_contrat: raw.status }),
+      ...(raw.recruiter !== undefined && { superieur_hierarchique: raw.recruiter }),
+      ...(raw.notes !== undefined && { notes: raw.notes })
+    };
+    const baseURL = API_CONFIG.BASE_URL;
+    const isSupabase = baseURL?.includes?.('supabase.co');
+    const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+
     try {
-      // Utiliser FormData pour permettre l'upload de CV
       const response = await api.put(`/recrutements/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
       return response.data;
-    } catch (error) {
-      console.error(`Error updating recruitment ${id}:`, error);
-      throw error;
+    } catch (edgeError) {
+      if (isSupabase && supabaseAnonKey && (edgeError.response?.status === 404 || edgeError.response?.status === 401)) {
+        const restBase = baseURL.replace(/\/functions\/v1\/?$/, '/rest/v1');
+        const restRes = await axios.patch(`${restBase}/historique_recrutement?id=eq.${id}`, payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': supabaseAnonKey,
+            'Authorization': `Bearer ${supabaseAnonKey}`,
+            'Prefer': 'return=representation'
+          }
+        });
+        const data = Array.isArray(restRes.data) ? restRes.data[0] : restRes.data;
+        return data ? {
+          id: data.id,
+          fullName: `${(data.nom || '').trim()} ${(data.prenom || '').trim()}`.trim(),
+          position: data.poste,
+          department: data.departement,
+          source: data.motif_recrutement,
+          applicationDate: data.date_recrutement,
+          status: data.type_contrat,
+          recruiter: data.superieur_hierarchique,
+          notes: data.notes,
+          ...data
+        } : data;
+      }
+      throw edgeError;
     }
   },
   

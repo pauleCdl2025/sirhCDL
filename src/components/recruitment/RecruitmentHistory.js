@@ -231,10 +231,8 @@ const RecruitmentHistory = () => {
       // Send data to API
       const response = await recrutementService.update(values.id, formData);
       
-      // Update the item in the list
-      setRecruitments(prev => prev.map(item => 
-        item.id === response.id ? response : item
-      ));
+      // Rafraîchir la liste depuis le serveur pour afficher les données à jour
+      await fetchRecruitments();
       
       // Success
       showNotification('Candidature mise à jour avec succès!');
