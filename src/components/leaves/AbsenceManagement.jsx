@@ -109,7 +109,6 @@ const AbsenceManagement = () => {
     try {
       // Fetch absences from API
       const absencesData = await absenceService.getAll();
-      console.log('Données des absences reçues:', absencesData);
       setAbsences(absencesData);
     } catch (err) {
       console.error('Erreur lors de la récupération des absences:', err);

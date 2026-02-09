@@ -82,16 +82,40 @@ export const congeService = {
   
   // Créer un nouveau congé
   create: async (congeData) => {
+    const formDataToObject = (fd) => {
+      const obj = {};
+      for (const [key, value] of fd.entries()) {
+        if (value instanceof File) continue;
+        obj[key] = value;
+      }
+      return obj;
+    };
+
     try {
-      // Si c'est FormData, ne pas définir Content-Type (laissé au navigateur)
       const config = congeData instanceof FormData ? {} : {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       };
-      
-      const response = await api.post('/conges', congeData, config);
-      return response.data;
+      const payload = congeData instanceof FormData ? formDataToObject(congeData) : congeData;
+
+      try {
+        const response = await api.post('/conges', congeData, config);
+        return response.data;
+      } catch (edgeError) {
+        if (isSupabase && SUPABASE_ANON_KEY && edgeError.response?.status === 404) {
+          const restBase = API_URL.replace(/\/functions\/v1\/?$/, '/rest/v1');
+          const restRes = await axios.post(`${restBase}/conges`, payload, {
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Prefer': 'return=representation'
+            }
+          });
+          const data = Array.isArray(restRes.data) ? restRes.data[0] : restRes.data;
+          return data;
+        }
+        throw edgeError;
+      }
     } catch (error) {
       console.error('Error creating conge:', error);
       throw error;

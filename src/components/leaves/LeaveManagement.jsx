@@ -134,8 +134,6 @@ const LeaveManagement = () => {
           };
         });
         setEmployeeDetails(employeeDetailsMap);
-        
-        console.log('Employés formatés:', formattedEmployees);
       } else {
         throw new Error('Format de données employés invalide ou vide');
       }

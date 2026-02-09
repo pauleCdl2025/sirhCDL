@@ -69,6 +69,81 @@ serve(async (req) => {
       });
     }
 
+    // POST /absences - Créer une nouvelle absence
+    if (req.method === "POST" && segments.length === 0) {
+      const contentType = req.headers.get("content-type") || "";
+      let body: Record<string, unknown> = {};
+
+      try {
+        if (contentType.includes("application/json")) {
+          body = await req.json() as Record<string, unknown>;
+        } else if (contentType.includes("multipart/form-data")) {
+          const formData = await req.formData();
+          for (const [key, value] of formData.entries()) {
+            if (value instanceof File) continue;
+            body[key] = value;
+          }
+        } else {
+          body = await req.json() as Record<string, unknown>;
+        }
+      } catch {
+        return new Response(JSON.stringify({ error: "Invalid request body" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const nom_employe = String(body.nom_employe || "").trim();
+      const date_debut = body.date_debut as string;
+      const date_fin = body.date_fin as string;
+
+      if (!nom_employe || !date_debut || !date_fin) {
+        return new Response(JSON.stringify({ error: "nom_employe, date_debut et date_fin sont requis" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      let dateRetour: string | null = (body.date_retour as string) || null;
+      if (!dateRetour && date_fin) {
+        const fin = new Date(date_fin);
+        fin.setDate(fin.getDate() + 1);
+        dateRetour = fin.toISOString().split("T")[0];
+      }
+
+      const insertData: Record<string, unknown> = {
+        nom_employe,
+        service: body.service || null,
+        poste: body.poste || null,
+        type_absence: body.type_absence || null,
+        motif: body.motif || null,
+        date_debut,
+        date_fin,
+        date_retour: dateRetour || null,
+        remuneration: body.remuneration || null,
+        statut: body.statut || "En attente",
+      };
+
+      const { data, error } = await supabase
+        .from("absence")
+        .insert(insertData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Insert absence error:", error);
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response(JSON.stringify(data), {
+        status: 201,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: "Not found" }), {
       status: 404,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
