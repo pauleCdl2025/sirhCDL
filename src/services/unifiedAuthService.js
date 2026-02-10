@@ -42,8 +42,8 @@ class UnifiedAuthService {
       return 'rh';
     }
 
-    // Si c'est un matricule (format CDL-YYYY-XXXX), c'est un employé
-    const matriculeRegex = /^CDL-\d{4}-\d{4}$/i;
+    // Si c'est un matricule (format CDL-YYYY-NNN...), c'est un employé
+    const matriculeRegex = /^CDL-\d{4}-\d{3,6}$/i;
     if (matriculeRegex.test(identifier.trim())) {
       return 'employee';
     }
@@ -67,7 +67,7 @@ class UnifiedAuthService {
    * @returns {boolean}
    */
   isValidMatricule(matricule) {
-    const matriculeRegex = /^CDL-\d{4}-\d{4}$/i;
+    const matriculeRegex = /^CDL-\d{4}-\d{3,6}$/i;
     return matriculeRegex.test(matricule.trim());
   }
 

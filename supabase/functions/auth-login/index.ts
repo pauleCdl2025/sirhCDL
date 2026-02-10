@@ -153,28 +153,40 @@ serve(async (req) => {
         { auth: { persistSession: false } }
       );
 
+      // Recherche insensible à la casse et aux espaces : trim + ilike (échapper % et _)
+      const raw = String(matricule).trim();
+      const pattern = raw.replace(/\\/g, "\\\\").replace(/%/g, "\\%").replace(/_/g, "\\_");
       const { data: employees, error } = await supabase
         .from("employees")
         .select("id, matricule, nom_prenom, password, email")
-        .eq("matricule", matricule.trim().toUpperCase())
+        .ilike("matricule", pattern)
         .limit(1);
 
       if (!error && employees?.length > 0) {
         const emp = employees[0];
+
+        // Message explicite si aucun mot de passe défini en base
+        if (emp.password == null || String(emp.password).trim() === "") {
+          return new Response(
+            JSON.stringify({
+              success: false,
+              message: "Aucun mot de passe défini pour ce matricule. Contactez les RH.",
+            }),
+            { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
 
         // Compat: certains mots de passe employés ont pu être stockés en clair.
         // - Si hash bcrypt ($2...), on compare via bcrypt
         // - Sinon, on compare en clair puis on migre vers bcrypt automatiquement.
         let valid = false;
         let needsMigration = false;
-        if (emp.password) {
-          const stored = String(emp.password);
-          if (stored.startsWith("$2")) {
-            valid = await verifyPassword(password, stored);
-          } else {
-            valid = password === stored;
-            needsMigration = valid;
-          }
+        const stored = String(emp.password);
+        if (stored.startsWith("$2")) {
+          valid = await verifyPassword(password, stored);
+        } else {
+          valid = password === stored;
+          needsMigration = valid;
         }
         if (valid) {
           if (needsMigration) {
