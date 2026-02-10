@@ -141,12 +141,17 @@ export const useEmployeePortal = () => {
         ]);
       }
       
-      // Charger les sanctions
+      // Charger les sanctions par ID employé (évite erreur de nom/session)
       try {
-        console.log("Chargement des sanctions pour l'employé:", user.nom_prenom);
-        const userSanctions = await sanctionService.getByEmployeeName(user.nom_prenom);
-        console.log("Sanctions récupérées:", userSanctions);
-        setSanctions(userSanctions);
+        const empId = userId ?? user?.id;
+        if (empId != null) {
+          console.log("Chargement des sanctions pour l'employé ID:", empId);
+          const userSanctions = await sanctionService.getByEmployeeId(empId);
+          console.log("Sanctions récupérées:", userSanctions);
+          setSanctions(Array.isArray(userSanctions) ? userSanctions : []);
+        } else {
+          setSanctions([]);
+        }
       } catch (sanctionError) {
         console.error("Erreur lors du chargement des sanctions:", sanctionError);
         setSanctions([]);

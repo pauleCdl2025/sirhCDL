@@ -43,6 +43,40 @@ serve(async (req) => {
       return new Response(JSON.stringify(data), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    // GET /sanctions/employe/:nom - par nom employé
+    if (req.method === "GET" && segments[0] === "employe" && segments[1]) {
+      const nom = decodeURIComponent(segments[1]);
+      const { data, error } = await supabase
+        .from("sanctions_table")
+        .select("*")
+        .ilike("nom_employe", nom)
+        .order("date", { ascending: false });
+      if (error) throw error;
+      return new Response(JSON.stringify(data || []), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // GET /sanctions?employee_id=122 - par ID employé (nom récupéré depuis employees)
+    const url = new URL(req.url);
+    const employeeId = url.searchParams.get("employee_id");
+    if (req.method === "GET" && employeeId && /^\d+$/.test(employeeId)) {
+      const { data: emp } = await supabase
+        .from("employees")
+        .select("nom_prenom")
+        .eq("id", parseInt(employeeId, 10))
+        .maybeSingle();
+      const nom = emp?.nom_prenom;
+      if (!nom) {
+        return new Response(JSON.stringify([]), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const { data, error } = await supabase
+        .from("sanctions_table")
+        .select("*")
+        .ilike("nom_employe", nom)
+        .order("date", { ascending: false });
+      if (error) throw error;
+      return new Response(JSON.stringify(data || []), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     // GET /sanctions - Liste
     const { data, error } = await supabase.from("sanctions_table").select("*").order("date", { ascending: false });
     if (error) throw error;

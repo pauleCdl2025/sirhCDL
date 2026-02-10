@@ -388,6 +388,17 @@ export const sanctionService = {
       throw error;
     }
   },
+
+  // Récupérer les sanctions d'un employé par son ID (évite les erreurs de nom/session)
+  getByEmployeeId: async (employeeId) => {
+    try {
+      const response = await api.get('/sanctions', { params: { employee_id: employeeId } });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching sanctions by employee id:', error);
+      throw error;
+    }
+  },
   
   // Créer une nouvelle sanction
   create: async (sanctionData) => {
