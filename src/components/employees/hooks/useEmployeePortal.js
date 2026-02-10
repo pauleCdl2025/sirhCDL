@@ -74,11 +74,28 @@ export const useEmployeePortal = () => {
         try {
           // Récupérer les données complètes de l'utilisateur depuis l'API
           console.log("Récupération des données complètes de l'utilisateur avec ID:", parsedUser.id);
-          const completeUserData = await employeeService.getById(parsedUser.id);
-          console.log("Données complètes récupérées:", completeUserData);
+          const raw = await employeeService.getById(parsedUser.id);
+          console.log("Données complètes récupérées:", raw);
+
+          // Normaliser la forme de la réponse
+          let completeUserData = null;
+          if (Array.isArray(raw)) {
+            completeUserData = raw.find((e) => Number(e.id) === Number(parsedUser.id))
+              || (raw.length === 1 ? raw[0] : null);
+          } else if (raw && typeof raw === 'object') {
+            if (raw.data && typeof raw.data === 'object' && !Array.isArray(raw.data)) {
+              completeUserData = raw.data;
+            } else {
+              completeUserData = raw;
+            }
+          }
           
-          // Fusionner les données existantes avec les données complètes
-          setUser({...parsedUser, ...completeUserData});
+          // Fusionner les données complètes AVEC priorité à celles issues de l'auth (parsedUser)
+          if (completeUserData && typeof completeUserData === 'object') {
+            setUser({ ...completeUserData, ...parsedUser });
+          } else {
+            setUser(parsedUser);
+          }
         } catch (apiError) {
           console.error("Erreur lors de la récupération des données complètes:", apiError);
           // En cas d'erreur, utiliser les données de session uniquement

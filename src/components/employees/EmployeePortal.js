@@ -117,12 +117,27 @@ const EmployeePortal = ({ onLogout }) => {
           try {
             // Récupérer les données complètes de l'utilisateur depuis l'API (GET /employees/:id)
             const raw = await employeeService.getById(parsedUser.id);
-            // Normaliser : certains backends renvoient un tableau ou { data: ... }
-            let completeUserData = raw;
-            if (Array.isArray(raw) && raw.length > 0) completeUserData = raw[0];
-            else if (raw && typeof raw === 'object' && raw.data != null && !Array.isArray(raw.data)) completeUserData = raw.data;
+
+            // Normaliser la forme de la réponse SANS jamais perdre l'ID de session
+            // - Certains backends renvoient un tableau complet d'employés
+            // - D'autres renvoient { data: {...} } ou directement l'objet
+            let completeUserData = null;
+
+            if (Array.isArray(raw)) {
+              // Essayer de retrouver l'employé correspondant à l'ID de session
+              completeUserData = raw.find((e) => Number(e.id) === Number(parsedUser.id)) 
+                || (raw.length === 1 ? raw[0] : null);
+            } else if (raw && typeof raw === 'object') {
+              if (raw.data && typeof raw.data === 'object' && !Array.isArray(raw.data)) {
+                completeUserData = raw.data;
+              } else {
+                completeUserData = raw;
+              }
+            }
+
             if (completeUserData && typeof completeUserData === 'object') {
-              setUser({ ...parsedUser, ...completeUserData });
+              // L'ID et le matricule de session (provenant d'auth-login) restent prioritaires
+              setUser({ ...completeUserData, ...parsedUser });
             } else {
               setUser(parsedUser);
             }
@@ -131,9 +146,14 @@ const EmployeePortal = ({ onLogout }) => {
             // Fallback : tenter via la liste au cas où l'endpoint par ID renverrait 404
             try {
               const list = await employeeService.getAll?.() ?? [];
-              const fromList = Array.isArray(list) ? list.find((e) => Number(e.id) === Number(parsedUser.id)) : null;
-              if (fromList) setUser({ ...parsedUser, ...fromList });
-              else setUser(parsedUser);
+              const fromList = Array.isArray(list)
+                ? list.find((e) => Number(e.id) === Number(parsedUser.id))
+                : null;
+              if (fromList) {
+                setUser({ ...fromList, ...parsedUser });
+              } else {
+                setUser(parsedUser);
+              }
             } catch (_) {
               setUser(parsedUser);
             }
