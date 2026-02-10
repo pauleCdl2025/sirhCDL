@@ -115,17 +115,28 @@ const EmployeePortal = ({ onLogout }) => {
           setUserId(parsedUser.id);
           
           try {
-            // Récupérer les données complètes de l'utilisateur depuis l'API
-            console.log("Récupération des données complètes de l'utilisateur avec ID:", parsedUser.id);
-            const completeUserData = await employeeService.getById(parsedUser.id);
-            console.log("Données complètes récupérées:", completeUserData);
-            
-            // Fusionner les données existantes avec les données complètes
-            setUser({...parsedUser, ...completeUserData});
+            // Récupérer les données complètes de l'utilisateur depuis l'API (GET /employees/:id)
+            const raw = await employeeService.getById(parsedUser.id);
+            // Normaliser : certains backends renvoient un tableau ou { data: ... }
+            let completeUserData = raw;
+            if (Array.isArray(raw) && raw.length > 0) completeUserData = raw[0];
+            else if (raw && typeof raw === 'object' && raw.data != null && !Array.isArray(raw.data)) completeUserData = raw.data;
+            if (completeUserData && typeof completeUserData === 'object') {
+              setUser({ ...parsedUser, ...completeUserData });
+            } else {
+              setUser(parsedUser);
+            }
           } catch (apiError) {
-            console.error("Erreur lors de la récupération des données complètes:", apiError);
-            // En cas d'erreur, utiliser les données de session uniquement
-            setUser(parsedUser);
+            console.error("Erreur lors de la récupération des données complètes (GET /employees/:id):", apiError);
+            // Fallback : tenter via la liste au cas où l'endpoint par ID renverrait 404
+            try {
+              const list = await employeeService.getAll?.() ?? [];
+              const fromList = Array.isArray(list) ? list.find((e) => Number(e.id) === Number(parsedUser.id)) : null;
+              if (fromList) setUser({ ...parsedUser, ...fromList });
+              else setUser(parsedUser);
+            } catch (_) {
+              setUser(parsedUser);
+            }
           }
         } else {
           console.log("ID utilisateur non trouvé dans les données de session");
