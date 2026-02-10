@@ -5,8 +5,12 @@ export const API_CONFIG = {
   UPLOAD_TIMEOUT: 120000,  // 2 minutes pour les uploads
   ONBOARDING_TIMEOUT: 180000, // 3 minutes pour l'onboarding
   
-  // URLs de base
-  BASE_URL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+  // URLs de base (forcer https si supabase.co sans protocole)
+  BASE_URL: (() => {
+    const url = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+    if (url.includes('supabase.co') && !url.startsWith('http')) return `https://${url}`;
+    return url;
+  })(),
   
   // Headers par défaut
   DEFAULT_HEADERS: {

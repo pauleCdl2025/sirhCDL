@@ -3,7 +3,11 @@ import { employeeService } from './api';
 import adminAuthService from './adminAuthService';
 
 // Auth : Supabase Edge Functions ou backend Express
-const API_BASE_URL = process.env.REACT_APP_API_URL || process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = (() => {
+  const url = process.env.REACT_APP_API_URL || process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+  if (url.includes('supabase.co') && !url.startsWith('http')) return `https://${url}`;
+  return url;
+})();
 const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const USE_SUPABASE = Boolean(SUPABASE_ANON_KEY && API_BASE_URL?.includes('supabase.co'));
 
@@ -151,23 +155,36 @@ class UnifiedAuthService {
    */
   async loginEmployee(matricule, password) {
     try {
-      // Normaliser le matricule (majuscules)
       const normalizedMatricule = matricule.trim().toUpperCase();
 
-      // Utiliser le service employé existant
-      const response = await employeeService.authenticate(normalizedMatricule, password);
+      // Supabase : auth-login gère email ET matricule
+      if (USE_SUPABASE) {
+        const response = await authApi.post('/auth-login', { matricule: normalizedMatricule, password });
+        if (response.data?.success && response.data?.employee) {
+          return {
+            success: true,
+            employee: response.data.employee,
+            token: response.data.token
+          };
+        }
+        return {
+          success: false,
+          error: response.data?.message || 'Matricule ou mot de passe incorrect'
+        };
+      }
 
+      // Backend Express : /employees/auth/login
+      const response = await employeeService.authenticate(normalizedMatricule, password);
       if (response && response.success) {
         return {
           success: true,
           employee: response.employee
         };
-      } else {
-        return {
-          success: false,
-          error: response?.message || 'Matricule ou mot de passe incorrect'
-        };
       }
+      return {
+        success: false,
+        error: response?.message || 'Matricule ou mot de passe incorrect'
+      };
     } catch (error) {
       console.error('Erreur lors de la connexion employé:', error);
       return {
