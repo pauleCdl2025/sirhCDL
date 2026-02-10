@@ -38,6 +38,12 @@ async function verifyPassword(password: string, hash: string): Promise<boolean> 
   }
 }
 
+async function hashPassword(password: string): Promise<string> {
+  const { hash } = await import("https://deno.land/x/bcrypt@v0.4.1/mod.ts");
+  // 10 rounds: bon compromis perf/sécurité pour ce projet
+  return await hash(password, 10);
+}
+
 serve(async (req) => {
   // Réponse CORS pour préflight (OPTIONS) - doit être en premier
   if (req.method === "OPTIONS") {
@@ -155,8 +161,30 @@ serve(async (req) => {
 
       if (!error && employees?.length > 0) {
         const emp = employees[0];
-        const valid = emp.password ? await verifyPassword(password, emp.password) : false;
+
+        // Compat: certains mots de passe employés ont pu être stockés en clair.
+        // - Si hash bcrypt ($2...), on compare via bcrypt
+        // - Sinon, on compare en clair puis on migre vers bcrypt automatiquement.
+        let valid = false;
+        let needsMigration = false;
+        if (emp.password) {
+          const stored = String(emp.password);
+          if (stored.startsWith("$2")) {
+            valid = await verifyPassword(password, stored);
+          } else {
+            valid = password === stored;
+            needsMigration = valid;
+          }
+        }
         if (valid) {
+          if (needsMigration) {
+            try {
+              const newHash = await hashPassword(password);
+              await supabase.from("employees").update({ password: newHash }).eq("id", emp.id);
+            } catch {
+              // Ne pas bloquer la connexion si la migration échoue
+            }
+          }
           const token = await generateToken({ id: emp.id, matricule: emp.matricule, type: "employee" } as Record<string, unknown>);
           return new Response(
             JSON.stringify({
