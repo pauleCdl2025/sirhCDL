@@ -1480,7 +1480,9 @@ const EmployeePortal = ({ onLogout }) => {
                 </div>
                 <div className="profile-header-info">
                   <h3>{user?.nom_prenom || 'Utilisateur'}</h3>
-                  <p className="profile-title">{user?.poste_actuel || 'Poste non spécifié'}</p>
+                  <p className="profile-title">
+                    {user?.poste_actuel || user?.poste || 'Poste non spécifié'}
+                  </p>
                   <p className="profile-id">ID Employé: {user?.id || 'Non disponible'}</p>
                 </div>
                 <div className="profile-actions">
@@ -1526,11 +1528,15 @@ const EmployeePortal = ({ onLogout }) => {
                   <div className="profile-info-grid">
                     <div className="profile-info-item">
                       <span className="info-label">Département</span>
-                      <span className="info-value">{user?.entity || 'Non disponible'}</span>
+                      <span className="info-value">
+                        {user?.departement || user?.functional_area || user?.entity || 'Non disponible'}
+                      </span>
                     </div>
                     <div className="profile-info-item">
                       <span className="info-label">Poste</span>
-                      <span className="info-value">{user?.poste_actuel || 'Non disponible'}</span>
+                      <span className="info-value">
+                        {user?.poste_actuel || user?.poste || 'Non disponible'}
+                      </span>
                     </div>
                     <div className="profile-info-item">
                       <span className="info-label">Date d'embauche</span>
