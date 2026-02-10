@@ -117,6 +117,53 @@ serve(async (req) => {
       return new Response(JSON.stringify(result), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    // POST /requests - créer une nouvelle demande employé
+    if (req.method === "POST" && segments.length === 0) {
+      let body: Record<string, unknown>;
+      try {
+        body = await req.json();
+      } catch {
+        return new Response(
+          JSON.stringify({ error: "Body JSON invalide" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const employee_id = body.employee_id != null ? Number(body.employee_id) : null;
+      const request_type = typeof body.request_type === "string" ? body.request_type.trim() : "";
+      if (employee_id == null || !request_type) {
+        return new Response(
+          JSON.stringify({ error: "employee_id et request_type requis" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const row: Record<string, unknown> = {
+        employee_id,
+        request_type,
+        request_details: body.request_details ?? "",
+        reason: body.reason ?? "",
+        status: (body.status as string) || "pending",
+      };
+      if (body.start_date != null && body.start_date !== "") row.start_date = body.start_date;
+      if (body.end_date != null && body.end_date !== "") row.end_date = body.end_date;
+
+      const { data, error } = await supabase
+        .from("employee_requests")
+        .insert(row)
+        .select()
+        .single();
+
+      if (error) {
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return new Response(JSON.stringify(data), {
+        status: 201,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // DELETE /requests/:id - supprimer une demande employé
     if (req.method === "DELETE" && segments[0] && /^\d+$/.test(segments[0])) {
       const id = parseInt(segments[0], 10);
