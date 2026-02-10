@@ -6,7 +6,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Authorization, Content-Type, x-client-info, apikey",
   "Access-Control-Max-Age": "86400",
 };
@@ -115,6 +115,27 @@ serve(async (req) => {
       const { data: emp } = await supabase.from("employees").select("nom_prenom, poste_actuel, entity, email").eq("id", d.employee_id).single();
       const result = { ...d, nom_prenom: emp?.nom_prenom ?? null, poste_actuel: emp?.poste_actuel ?? null, entity: emp?.entity ?? null, email: emp?.email ?? null };
       return new Response(JSON.stringify(result), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // DELETE /requests/:id - supprimer une demande employé
+    if (req.method === "DELETE" && segments[0] && /^\d+$/.test(segments[0])) {
+      const id = parseInt(segments[0], 10);
+      const { error } = await supabase
+        .from("employee_requests")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     return new Response(JSON.stringify({ error: "Not found" }), {
