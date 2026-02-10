@@ -275,36 +275,78 @@ const EmployeePortal = ({ onLogout }) => {
         //   }
         // ]);
         
-        // Charger les documents depuis l'API
+        // Charger les documents depuis l'API (backend Express ou Supabase REST)
         try {
           setLoadingDocuments(true);
           console.log("Chargement des documents pour l'employé ID:", userId);
-          const response = await fetch(`http://localhost:5000/api/employees/${userId}/documents`, {
-            headers: {
-              'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+
+          const apiBase = process.env.REACT_APP_API_URL || process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+          const isSupabase = apiBase.includes('supabase.co');
+
+          if (isSupabase) {
+            // Supabase : utiliser l'API REST sur la table employee_documents
+            const supabaseUrl = (process.env.REACT_APP_SUPABASE_URL || apiBase.replace(/\/functions\/v1\/?$/, '')).replace(/\/$/, '');
+            const anonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+
+            if (!anonKey) {
+              console.warn('REACT_APP_SUPABASE_ANON_KEY manquant, impossible de charger les documents depuis Supabase.');
+              setDocuments([]);
+            } else {
+              const restUrl = `${supabaseUrl}/rest/v1/employee_documents?employee_id=eq.${userId}&select=*`;
+              const response = await fetch(restUrl, {
+                headers: {
+                  'Content-Type': 'application/json',
+                  'apikey': anonKey,
+                  'Authorization': `Bearer ${anonKey}`,
+                },
+              });
+
+              if (response.ok) {
+                const documentsData = await response.json();
+                console.log("Documents récupérés (Supabase REST):", documentsData);
+                const formattedDocuments = documentsData.map(doc => ({
+                  id: doc.id,
+                  name: doc.file_name,
+                  type: doc.document_type?.toLowerCase() || 'other',
+                  date: doc.upload_date,
+                  size: 'N/A',
+                  file_path: doc.file_path,
+                  file_type: doc.file_type
+                }));
+                setDocuments(formattedDocuments);
+              } else {
+                console.warn("Impossible de charger les documents depuis Supabase REST, code:", response.status);
+                setDocuments([]);
+              }
             }
-          });
-          
-          if (response.ok) {
-            const documentsData = await response.json();
-            console.log("Documents récupérés:", documentsData);
-            
-            // Transformer les données pour correspondre au format attendu
-            const formattedDocuments = documentsData.map(doc => ({
-              id: doc.id,
-              name: doc.file_name,
-              type: doc.document_type?.toLowerCase() || 'other',
-              date: doc.upload_date,
-              size: 'N/A', // La taille n'est pas stockée dans la base
-              file_path: doc.file_path,
-              file_type: doc.file_type
-            }));
-            
-            setDocuments(formattedDocuments);
           } else {
-            console.warn("Impossible de charger les documents depuis l'API, utilisation de données par défaut");
-            // En cas d'erreur, utiliser des données par défaut
-            setDocuments([]);
+            // Backend Express local / distant
+            const base = apiBase.endsWith('/api') ? apiBase : `${apiBase}/api`;
+            const response = await fetch(`${base}/employees/${userId}/documents`, {
+              headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+              }
+            });
+
+            if (response.ok) {
+              const documentsData = await response.json();
+              console.log("Documents récupérés (backend):", documentsData);
+              
+              const formattedDocuments = documentsData.map(doc => ({
+                id: doc.id,
+                name: doc.file_name,
+                type: doc.document_type?.toLowerCase() || 'other',
+                date: doc.upload_date,
+                size: 'N/A',
+                file_path: doc.file_path,
+                file_type: doc.file_type
+              }));
+              
+              setDocuments(formattedDocuments);
+            } else {
+              console.warn("Impossible de charger les documents depuis le backend, utilisation de données par défaut");
+              setDocuments([]);
+            }
           }
         } catch (docError) {
           console.error("Erreur lors du chargement des documents:", docError);
@@ -502,11 +544,28 @@ const EmployeePortal = ({ onLogout }) => {
       if (!doc.id) {
         throw new Error('Document non disponible');
       }
-      
-      // Construire l'URL avec le token d'authentification
-      const token = sessionStorage.getItem('token');
-      const url = `http://localhost:5000/api/employees/documents/${doc.id}/view?token=${token}`;
-      window.open(url, '_blank');
+
+      const apiBase = process.env.REACT_APP_API_URL || process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+      const isSupabase = apiBase.includes('supabase.co');
+
+      if (isSupabase) {
+        // Si le chemin est déjà une URL absolue, l'ouvrir directement
+        if (doc.file_path && /^https?:\/\//i.test(doc.file_path)) {
+          window.open(doc.file_path, '_blank');
+          return;
+        }
+
+        // Sinon, supposer un bucket public Supabase (file_path = 'bucket/path/to/file.ext')
+        const supabaseUrl = (process.env.REACT_APP_SUPABASE_URL || apiBase.replace(/\/functions\/v1\/?$/, '')).replace(/\/$/, '');
+        const publicUrl = `${supabaseUrl}/storage/v1/object/public/${String(doc.file_path || '').replace(/^\//, '')}`;
+        window.open(publicUrl, '_blank');
+      } else {
+        // Backend Express
+        const base = apiBase.endsWith('/api') ? apiBase : `${apiBase}/api`;
+        const token = sessionStorage.getItem('token');
+        const url = `${base}/employees/documents/${doc.id}/view?token=${token}`;
+        window.open(url, '_blank');
+      }
     } catch (error) {
       console.error('Erreur lors de l\'ouverture du document:', error);
       setError(error.message || 'Impossible d\'ouvrir le document. Veuillez réessayer.');
@@ -521,15 +580,21 @@ const EmployeePortal = ({ onLogout }) => {
       if (!doc.id) {
         throw new Error('Document non disponible');
       }
-      
-      const response = await fetch(`http://localhost:5000/api/employees/documents/${doc.id}/download`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+
+      const apiBase = process.env.REACT_APP_API_URL || process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+      const isSupabase = apiBase.includes('supabase.co');
+
+      if (isSupabase) {
+        // Supabase : télécharger via l'URL publique (ou file_path absolu)
+        const supabaseUrl = (process.env.REACT_APP_SUPABASE_URL || apiBase.replace(/\/functions\/v1\/?$/, '')).replace(/\/$/, '');
+        const targetUrl = /^https?:\/\//i.test(doc.file_path || '')
+          ? doc.file_path
+          : `${supabaseUrl}/storage/v1/object/public/${String(doc.file_path || '').replace(/^\//, '')}`;
+
+        const response = await fetch(targetUrl);
+        if (!response.ok) {
+          throw new Error('Impossible de télécharger le document');
         }
-      });
-      
-      if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -541,8 +606,30 @@ const EmployeePortal = ({ onLogout }) => {
         document.body.removeChild(a);
         setSuccessMessage(`Téléchargement de "${doc.name}" démarré.`);
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Impossible de télécharger le document');
+        // Backend Express
+        const base = apiBase.endsWith('/api') ? apiBase : `${apiBase}/api`;
+        const response = await fetch(`${base}/employees/documents/${doc.id}/download`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+          }
+        });
+        
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = doc.name || 'document.pdf';
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          setSuccessMessage(`Téléchargement de "${doc.name}" démarré.`);
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Impossible de télécharger le document');
+        }
       }
     } catch (error) {
       console.error('Erreur lors du téléchargement:', error);
