@@ -31,8 +31,11 @@
     "web-vitals": "^2.1.4",
     "yup": "^1.7.0"
   },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cross-env PORT=3000 react-scripts start",
     "start:no-ws": "set \"FAST_REFRESH=false\" && set \"CHOKIDAR_USEPOLLING=true\" && set \"WDS_SOCKET_PORT=0\" && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
