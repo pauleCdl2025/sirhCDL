@@ -1,30 +1,4 @@
-/* Variables CSS pour la cohérence des couleurs - Utilisation des couleurs originales de l'app */
-:root {
-  --primary: #3a7bd5;
-  --primary-light: #eef5ff;
-  --primary-dark: #2c62b0;
-  --secondary: #6c757d;
-  --success: #00d1b2;
-  --info: #3298dc;
-  --warning: #ffdd57;
-  --danger: #ff3860;
-  --light: #f8f9fa;
-  --dark: #1a202c;
-  --gray: #8c98a4;
-  --gray-light: #f8fafd;
-  --white: #ffffff;
-  
-  --gradient-primary: linear-gradient(135deg, #3a7bd5, #00d1b2);
-  --gradient-success: linear-gradient(135deg, #00d1b2, #2bb673);
-  --gradient-info: linear-gradient(135deg, #3298dc, #6f42c1);
-  --gradient-warning: linear-gradient(135deg, #ffdd57, #ff7730);
-  --gradient-danger: linear-gradient(135deg, #ff3860, #ff5252);
-  
-  --border-color: #e9ecef;
-  --shadow-light: rgba(0, 0, 0, 0.08);
-  --shadow-medium: rgba(0, 0, 0, 0.15);
-  --shadow-heavy: rgba(0, 0, 0, 0.25);
-}
+/* Note: utilise les variables globales définies dans `src/index.css` */
 
 /* Reset et base */
 * {
@@ -33,9 +7,9 @@
 
 .contrat-pdf-manager {
   min-height: 100vh;
-  background: #f0f4f9;
+  background: var(--bg);
   font-family: 'Poppins', sans-serif;
-  color: var(--dark);
+  color: var(--text);
   line-height: 1.6;
 }
 
@@ -46,7 +20,7 @@
   padding: 2rem 2rem 2.5rem;
   margin-bottom: 2rem;
   border-radius: 0 0 2rem 2rem;
-  box-shadow: 0 10px 40px rgba(58, 123, 213, 0.3);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.28);
   position: relative;
   overflow: hidden;
 }
@@ -307,13 +281,13 @@
 
 .tab-button:hover {
   color: var(--primary);
-  background: rgba(58, 123, 213, 0.05);
+  background: rgba(58, 142, 186, 0.06);
 }
 
 .tab-button.active {
   background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 4px 15px rgba(58, 123, 213, 0.4);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.22);
 }
 
 /* Contenu des onglets */
@@ -383,7 +357,7 @@
   transition: all 0.3s ease;
   border: none;
   font-size: 1rem;
-  box-shadow: 0 6px 20px rgba(58, 123, 213, 0.4);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.22);
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
@@ -391,7 +365,7 @@
 
 .upload-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(58, 123, 213, 0.6);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.32);
 }
 
 .upload-hint {
@@ -545,7 +519,7 @@
   outline: none;
   border-color: var(--primary);
   background: white;
-  box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.1);
+  box-shadow: 0 0 0 4px rgba(58, 142, 186, 0.16);
 }
 
 .filter-buttons {

@@ -3,7 +3,7 @@
 .statistics-charts-container {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 20px;
-  background: #f8f9fa;
+  background: var(--bg);
   min-height: 100vh;
 }
 
@@ -11,10 +11,10 @@
   text-align: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: linear-gradient(135deg, #3a7bd5 0%, #00d1b2 100%);
+  background: var(--gradient-primary);
   color: white;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(58, 123, 213, 0.3);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.28);
 }
 
 .charts-header h2 {
@@ -39,11 +39,11 @@
 }
 
 .chart-card {
-  background: white;
+  background: var(--surface);
   border-radius: 12px;
   padding: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e9ecef;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -51,7 +51,7 @@
 
 .chart-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
 }
 
 .chart-card.full-width {
@@ -67,7 +67,7 @@
   margin: 0 0 8px 0;
   font-size: 1.3rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text);
 }
 
 .chart-subtitle {
@@ -104,14 +104,14 @@
 
 .metric-item:hover {
   transform: scale(1.05);
-  border-color: #3a7bd5;
-  box-shadow: 0 4px 15px rgba(58, 123, 213, 0.2);
+  border-color: var(--primary);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.18);
 }
 
 .metric-value {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #3a7bd5;
+  color: var(--primary);
   margin-bottom: 8px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -138,7 +138,7 @@
 
 .statistics-loading .loader {
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #3a7bd5;
+  border-top: 4px solid var(--primary);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -183,7 +183,7 @@
 
 .statistics-no-data {
   background: #f8f9fa;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border);
   border-radius: 8px;
   color: #666;
 }
@@ -191,7 +191,7 @@
 .statistics-no-data i {
   font-size: 3rem;
   margin-bottom: 20px;
-  color: #3a7bd5;
+  color: var(--primary);
   opacity: 0.7;
 }
 

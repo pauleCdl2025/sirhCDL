@@ -58,13 +58,13 @@
     outline: none;
     border-color: #3a8eba;
     background: white;
-    box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.1);
+    box-shadow: 0 0 0 4px rgba(58, 142, 186, 0.18);
 }
 
 .search-input.focused {
     border-color: #3a8eba;
     background: white;
-    box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.1);
+    box-shadow: 0 0 0 4px rgba(58, 142, 186, 0.18);
 }
 
 .search-submit {
@@ -352,8 +352,8 @@
 }
 
 .bg-primary-light {
-    background-color: rgba(58, 123, 213, 0.1) !important;
-    color: #3a7bd5 !important;
+    background-color: rgba(58, 142, 186, 0.12) !important;
+    color: var(--primary) !important;
 }
 
 .bg-success-light {

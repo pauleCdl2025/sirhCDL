@@ -2,7 +2,7 @@
 
 .onboarding-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: var(--bg);
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -11,9 +11,10 @@
 .progress-container {
   margin: 20px 0;
   padding: 20px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .progress-bar {
@@ -27,7 +28,7 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3a7bd5, #00d1b2);
+  background: var(--gradient-primary);
   border-radius: 4px;
   transition: width 0.3s ease;
 }
@@ -44,18 +45,18 @@
   text-align: center;
   margin-bottom: 30px;
   padding: 30px;
-  background: white;
+  background: var(--surface);
   border-radius: 15px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e9ecef;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
 }
 
 .onboarding-header h1 {
   margin: 0 0 15px 0;
   font-size: 2.5rem;
   font-weight: 700;
-  color: #333;
-  background: linear-gradient(135deg, #3a7bd5, #00d1b2);
+  color: var(--text);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -77,11 +78,11 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  background: white;
+  background: var(--surface);
   border-radius: 15px;
   padding: 30px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e9ecef;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
   position: relative;
 }
 
@@ -124,17 +125,17 @@
 }
 
 .progress-step.active .step-number {
-  background: #3a7bd5;
+  background: var(--primary);
   color: white;
   transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(58, 123, 213, 0.3);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.22);
 }
 
 .progress-step.current .step-number {
-  background: linear-gradient(135deg, #3a7bd5, #00d1b2);
+  background: var(--gradient-primary);
   color: white;
   transform: scale(1.2);
-  box-shadow: 0 6px 20px rgba(58, 123, 213, 0.4);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.28);
 }
 
 .step-info h4 {
@@ -157,11 +158,11 @@
 }
 
 .onboarding-step {
-  background: white;
+  background: var(--surface);
   border-radius: 15px;
   padding: 30px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e9ecef;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
   animation: fadeInUp 0.6s ease-out;
 }
 
@@ -184,7 +185,7 @@
 }
 
 .step-header h3 i {
-  color: #3a7bd5;
+  color: var(--primary);
   font-size: 1.5rem;
 }
 
@@ -228,8 +229,8 @@
 
 .form-control:focus {
   outline: none;
-  border-color: #3a7bd5;
-  box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.1);
+  border-color: rgba(58, 142, 186, 0.75);
+  box-shadow: 0 0 0 4px rgba(58, 142, 186, 0.16);
 }
 
 .form-control.readonly {
@@ -260,15 +261,15 @@
 }
 
 .radio-item:hover {
-  border-color: #3a7bd5;
-  background: rgba(58, 123, 213, 0.05);
+  border-color: var(--primary);
+  background: rgba(58, 142, 186, 0.06);
 }
 
 .radio-item input[type="radio"] {
   margin: 0;
   width: 18px;
   height: 18px;
-  accent-color: #3a7bd5;
+  accent-color: var(--primary);
 }
 
 .radio-item span {
@@ -294,8 +295,8 @@
 }
 
 .document-upload-area:hover {
-  border-color: #3a7bd5;
-  background: rgba(58, 123, 213, 0.05);
+  border-color: var(--primary);
+  background: rgba(58, 142, 186, 0.06);
 }
 
 .file-input {
@@ -316,7 +317,7 @@
 
 .upload-label i {
   font-size: 3rem;
-  color: #3a7bd5;
+  color: var(--primary);
 }
 
 .upload-label span {
@@ -362,7 +363,7 @@
 }
 
 .document-info i {
-  color: #3a7bd5;
+  color: var(--primary);
   font-size: 1.2rem;
 }
 
@@ -447,8 +448,8 @@
 }
 
 .checklist-item:hover {
-  border-color: #3a7bd5;
-  background: rgba(58, 123, 213, 0.05);
+  border-color: var(--primary);
+  background: rgba(58, 142, 186, 0.06);
   transform: translateY(-2px);
 }
 
@@ -456,7 +457,7 @@
   margin: 0;
   width: 20px;
   height: 20px;
-  accent-color: #3a7bd5;
+  accent-color: var(--primary);
 }
 
 .checklist-content h4 {
@@ -502,7 +503,7 @@
 }
 
 .summary-card h4 i {
-  color: #3a7bd5;
+  color: var(--primary);
 }
 
 .summary-content p {
@@ -560,13 +561,13 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #3a7bd5, #00d1b2);
+  background: var(--gradient-primary);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(58, 123, 213, 0.3);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.22);
 }
 
 .btn-secondary {

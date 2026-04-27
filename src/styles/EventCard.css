@@ -2,9 +2,10 @@
 
 /* ====== Styles pour EventsComponent ====== */
 .event-card-component {
-  background-color: #ffffff;
+  background-color: var(--surface);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
   position: relative;
   height: 100%;
@@ -16,8 +17,8 @@
   display: flex;
   align-items: center;
   padding: 1rem 1.5rem;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #eaedf1;
+  background-color: var(--surface-2);
+  border-bottom: 1px solid var(--border);
 }
 
 .event-card-header .card-icon {
@@ -26,7 +27,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+  background: var(--gradient-primary);
   color: white;
   border-radius: 10px;
   margin-right: 0.75rem;
@@ -37,7 +38,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0;
-  color: #333;
+  color: var(--text);
 }
 
 .event-card-body {
@@ -56,7 +57,7 @@
 }
 
 .decoration-1 {
-  background: linear-gradient(45deg, #3a7bd5, #00d2ff);
+  background: var(--gradient-primary);
   width: 180px;
   height: 180px;
   top: -80px;
@@ -64,7 +65,7 @@
 }
 
 .decoration-2 {
-  background: linear-gradient(45deg, #3a7bd5, #00d2ff);
+  background: var(--gradient-primary);
   width: 120px;
   height: 120px;
   bottom: -50px;
@@ -83,10 +84,10 @@
 .event-item {
   padding: 1rem;
   border-radius: 8px;
-  background-color: #f8faff;
+  background-color: var(--surface-2);
   margin-bottom: 1rem;
   transition: all 0.2s ease;
-  border-left: 4px solid #3a7bd5;
+  border-left: 4px solid var(--primary);
 }
 
 .event-item:hover {
@@ -109,14 +110,14 @@
 .event-meta-date i,
 .event-meta-location i {
   margin-right: 0.3rem;
-  color: #3a7bd5;
+  color: var(--primary);
 }
 
 .event-name {
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #333;
+  color: var(--text);
 }
 
 .event-description {
@@ -169,20 +170,21 @@
 
 .event-card {
   display: flex;
-  background-color: #fff;
-  border-radius: 10px;
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .event-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
 }
 
 .event-date-badge {
-  background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+  background: var(--gradient-primary);
   color: white;
   padding: 1rem 0.8rem;
   display: flex;
@@ -228,7 +230,7 @@
 .event-location i,
 .event-time i {
   margin-right: 0.4rem;
-  color: #3a7bd5;
+  color: var(--primary);
 }
 
 .event-description {

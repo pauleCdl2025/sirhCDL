@@ -5,7 +5,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #f0f4f9 0%, #eef5ff 50%, #e2e8f0 100%);
+  background: linear-gradient(135deg, var(--bg) 0%, rgba(58, 142, 186, 0.08) 50%, rgba(226, 232, 240, 0.9) 100%);
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -17,12 +17,12 @@
 
 /* Header ultra-élégant avec effet glassmorphism */
 .agent-header {
-  background: linear-gradient(135deg, rgba(58, 123, 213, 0.95) 0%, rgba(44, 98, 176, 0.95) 100%);
+  background: linear-gradient(135deg, rgba(41, 87, 133, 0.95) 0%, rgba(58, 142, 186, 0.95) 100%);
   padding: 28px 36px;
   display: flex;
   align-items: center;
   gap: 28px;
-  box-shadow: 0 8px 32px rgba(58, 123, 213, 0.15);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.18);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
@@ -254,7 +254,7 @@
   right: 0;
   bottom: 0;
   background: radial-gradient(circle at 20% 80%, rgba(0, 209, 178, 0.03) 0%, transparent 50%),
-              radial-gradient(circle at 80% 20%, rgba(58, 123, 213, 0.03) 0%, transparent 50%);
+              radial-gradient(circle at 80% 20%, rgba(58, 142, 186, 0.04) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -394,15 +394,15 @@
 /* Bouton de salutation spécial */
 .voice-btn.secondary.greeting-btn {
   background: linear-gradient(135deg, #eef5ff 0%, #e0f2fe 100%);
-  border-color: #3a7bd5;
-  color: #3a7bd5;
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .voice-btn.secondary.greeting-btn:hover {
-  background: linear-gradient(135deg, #3a7bd5 0%, #2c62b0 100%);
+  background: var(--gradient-primary);
   color: #ffffff;
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 12px 32px rgba(58, 123, 213, 0.3);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.22);
 }
 
 .voice-btn:disabled {
@@ -546,7 +546,7 @@
   padding: 20px;
   background: linear-gradient(135deg, #eef5ff 0%, #e0f2fe 100%);
   border-radius: 16px;
-  border: 1px solid #3a7bd5;
+  border: 1px solid var(--primary);
   position: relative;
   overflow: hidden;
 }
@@ -558,12 +558,12 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #3a7bd5, #00d1b2, #2bb673);
+  background: linear-gradient(90deg, var(--primary), #00d1b2, #2bb673);
 }
 
 .help-section .conseil-utilisation h5 {
   margin: 0 0 10px 0;
-  color: #3a7bd5;
+  color: var(--primary);
   font-size: 17px;
   font-weight: 700;
   display: flex;
@@ -574,7 +574,7 @@
 .help-section .conseil-utilisation p {
   margin: 0;
   font-size: 15px;
-  color: #2c62b0;
+  color: var(--primary-dark);
   line-height: 1.6;
   font-weight: 500;
 }

@@ -44,7 +44,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, #3a7bd5, #00d1b2, #3a7bd5, #00d1b2);
+  background: linear-gradient(90deg, var(--primary), #00d1b2, var(--primary), #00d1b2);
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
 }
@@ -74,7 +74,7 @@
   height: 100px;
   border: 3px solid transparent;
   border-radius: 50%;
-  background: linear-gradient(45deg, #3a7bd5, #00d1b2, #3a7bd5, #00d1b2) border-box;
+  background: linear-gradient(45deg, var(--primary), #00d1b2, var(--primary), #00d1b2) border-box;
   background-size: 200% 200%;
   -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: destination-out;
@@ -87,11 +87,11 @@
   width: 88px;
   height: 88px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3a7bd5 0%, #00d1b2 50%, #3a7bd5 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #00d1b2 50%, var(--primary) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 12px 40px rgba(58, 123, 213, 0.3);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.28);
   position: relative;
   overflow: hidden;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -133,7 +133,7 @@
   font-weight: 700;
   color: #1e293b;
   margin: 0;
-  background: linear-gradient(135deg, #3a7bd5, #00d1b2);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -289,13 +289,13 @@
 }
 
 .assistant-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #3a7bd5, #00d1b2);
+  background: var(--gradient-primary);
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
 .assistant-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #2c62b0, #00b894);
+  background: linear-gradient(135deg, var(--primary-dark), #00b894);
 }
 
 /* Section de contrôle ultra-moderne */
@@ -322,7 +322,7 @@
   color: #1e293b;
   margin: 0 0 24px 0;
   text-align: center;
-  background: linear-gradient(135deg, #3a7bd5, #00d1b2);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -339,7 +339,7 @@
 /* Bouton vocal principal ultra-moderne */
 .voice-button {
   position: relative;
-  background: linear-gradient(135deg, #3a7bd5 0%, #00d1b2 100%);
+  background: var(--gradient-primary);
   border: none;
   border-radius: 50%;
   width: 120px;
@@ -349,7 +349,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 32px rgba(58, 123, 213, 0.3);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.22);
   overflow: hidden;
 }
 
@@ -368,7 +368,7 @@
 
 .voice-button:hover {
   transform: scale(1.1);
-  box-shadow: 0 16px 48px rgba(58, 123, 213, 0.4);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.32);
 }
 
 .voice-button:hover::before {
@@ -515,7 +515,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #3a7bd5, #00d1b2);
+  background: var(--gradient-primary);
   opacity: 0;
   transition: opacity 0.3s ease;
   border-radius: 18px;
@@ -524,7 +524,7 @@
 .mode-button.active {
   color: white;
   border-color: transparent;
-  box-shadow: 0 8px 24px rgba(58, 123, 213, 0.3);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.22);
 }
 
 .mode-button.active::before {

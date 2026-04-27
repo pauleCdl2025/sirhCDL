@@ -68,7 +68,7 @@
   }
   
   .leave-icon {
-    background: linear-gradient(135deg, #3a7bd5, #00d1b2);
+    background: var(--gradient-primary);
     color: white;
   }
   

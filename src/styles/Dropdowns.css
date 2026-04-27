@@ -1,36 +1,36 @@
 /* Base dropdown styles */
 .dropdown-menu {
     position: absolute;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
     z-index: 1050;
     min-width: 280px;
-    border: none;
     padding: 0.5rem 0;
 }
 
 .dropdown-item {
     padding: 0.5rem 1.5rem;
     font-size: 0.875rem;
-    color: #333;
+    color: var(--text);
     text-decoration: none;
     display: block;
     transition: all 0.3s ease;
 }
 
 .dropdown-item:hover {
-    background-color: #eef5ff;
-    color: #3a7bd5;
+    background-color: rgba(58, 142, 186, 0.10);
+    color: var(--primary);
 }
 
 /* Bootstrap utility classes support */
 .bg-primary {
-    background-color: #3a7bd5 !important;
+    background-color: var(--primary) !important;
 }
 
 .bg-primary-light {
-    background-color: rgba(58, 123, 213, 0.1) !important;
+    background-color: rgba(58, 142, 186, 0.12) !important;
 }
 
 .bg-success-light {
@@ -42,7 +42,7 @@
 }
 
 .text-primary {
-    color: #3a7bd5 !important;
+    color: var(--primary) !important;
 }
 
 .text-success {

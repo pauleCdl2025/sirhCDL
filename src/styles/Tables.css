@@ -1,24 +1,25 @@
 /* styles/Tables.css */
 
 .table-card {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 2rem;
 }
 
 .card-header {
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
-  background-color: #ffffff;
-  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--surface);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .card-title {
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0;
-  color: #333;
+  color: var(--text);
 }
 
 .card-icon {
@@ -27,8 +28,8 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background-color: rgba(74, 108, 247, 0.1);
-  color: #4a6cf7;
+  background-color: rgba(58, 142, 186, 0.12);
+  color: var(--primary);
   border-radius: 8px;
   margin-right: 0.75rem;
 }
@@ -44,11 +45,11 @@
 }
 
 .custom-table thead th {
-  background-color: #f8f9fa;
-  color: #495057;
+  background-color: var(--surface-2);
+  color: rgba(16, 24, 40, 0.85);
   font-weight: 600;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border);
   text-align: left;
   white-space: nowrap;
 }
@@ -58,13 +59,13 @@
 }
 
 .custom-table tbody tr:hover {
-  background-color: #f8f9fa;
+  background-color: rgba(58, 142, 186, 0.06);
 }
 
 .custom-table tbody td {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid #e9ecef;
-  color: #495057;
+  border-bottom: 1px solid var(--border);
+  color: rgba(16, 24, 40, 0.82);
 }
 
 .custom-table tbody tr:last-child td {
@@ -199,12 +200,12 @@
 
 /* Variantes de couleurs */
 .stats-card-primary {
-  border-left-color: #0d6efd;
+  border-left-color: var(--primary);
 }
 
 .stats-card-primary .stats-card-icon {
-  color: #0d6efd;
-  background-color: rgba(13, 110, 253, 0.1);
+  color: var(--primary);
+  background-color: rgba(58, 142, 186, 0.12);
 }
 
 .stats-card-success {

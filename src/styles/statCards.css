@@ -52,12 +52,12 @@
   
   /* Variantes de couleurs */
   .stats-card-primary {
-    border-left-color: #0d6efd;
+    border-left-color: var(--primary);
   }
   
   .stats-card-primary .stats-card-icon {
-    color: #0d6efd;
-    background-color: rgba(13, 110, 253, 0.1);
+    color: var(--primary);
+    background-color: rgba(58, 142, 186, 0.12);
   }
   
   .stats-card-success {

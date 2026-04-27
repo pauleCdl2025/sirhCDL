@@ -47,7 +47,8 @@
   --transition-base: all 0.25s ease;
 
   /* Sidebar */
-  --sidebar-bg: linear-gradient(180deg, #0b1220 0%, #111b2f 100%);
+  /* Keep sidebar in brand colors (logo) */
+  --sidebar-bg: linear-gradient(180deg, var(--primary-dark) 0%, #163b5a 55%, var(--primary-dark) 100%);
   --sidebar-border: rgba(255, 255, 255, 0.10);
 }
   
@@ -233,6 +234,51 @@ h1, h2, h3, h4, h5, h6 {
   .table thead th {
     color: var(--text);
     background: var(--surface-2);
+  }
+
+  /* Modern form controls (Bootstrap + custom) */
+  .form-control,
+  .form-select,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  textarea,
+  select {
+    border-radius: var(--radius-sm);
+    border-color: var(--border);
+    background: rgba(255, 255, 255, 0.85);
+  }
+
+  .form-control::placeholder,
+  textarea::placeholder {
+    color: rgba(102, 112, 133, 0.85);
+  }
+
+  .form-control:focus,
+  .form-select:focus,
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: rgba(58, 142, 186, 0.75);
+    box-shadow: 0 0 0 4px rgba(58, 142, 186, 0.16);
+  }
+
+  /* Modals */
+  .modal-content,
+  .modal-dialog .modal-content {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Subtle page containers */
+  .page-content {
+    color: var(--text);
   }
   
   /* Animations */

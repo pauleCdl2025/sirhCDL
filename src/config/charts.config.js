@@ -19,7 +19,7 @@ export const CHARTS_CONFIG = {
     REFRESH_INTERVAL: 5 * 60 * 1000, // 5 minutes
     ANIMATION_DURATION: 600, // 0.6 secondes
     COLORS: {
-      PRIMARY: '#3a7bd5',
+      PRIMARY: '#3a8eba',
       SECONDARY: '#00d1b2',
       SUCCESS: '#28a745',
       WARNING: '#ffc107',
@@ -27,7 +27,7 @@ export const CHARTS_CONFIG = {
       INFO: '#17a2b8'
     },
     PALETTE: [
-      '#3a7bd5',
+      '#3a8eba',
       '#00d1b2',
       '#ff6b6b',
       '#4ecdc4',

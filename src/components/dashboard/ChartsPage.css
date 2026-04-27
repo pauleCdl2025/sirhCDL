@@ -2,17 +2,17 @@
 
 .charts-page {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: var(--bg);
   padding: 20px;
 }
 
 .charts-page-header {
-  background: white;
+  background: var(--surface);
   border-radius: 12px;
   padding: 25px;
   margin-bottom: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e9ecef;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
 }
 
 .header-content {
@@ -24,8 +24,8 @@
   margin: 0 0 10px 0;
   font-size: 2.2rem;
   font-weight: 700;
-  color: #333;
-  background: linear-gradient(135deg, #3a7bd5, #00d1b2);
+  color: var(--text);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -43,11 +43,11 @@
 }
 
 .charts-footer {
-  background: white;
+  background: var(--surface);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e9ecef;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -70,7 +70,7 @@
 }
 
 .info-item i {
-  color: #3a7bd5;
+  color: var(--primary);
   font-size: 1rem;
 }
 
@@ -96,15 +96,15 @@
 }
 
 .btn-outline-primary {
-  color: #3a7bd5;
-  border-color: #3a7bd5;
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 .btn-outline-primary:hover {
-  background: #3a7bd5;
+  background: var(--primary);
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(58, 123, 213, 0.3);
+  box-shadow: 0 14px 40px rgba(58, 142, 186, 0.28);
 }
 
 .btn i {
@@ -215,7 +215,7 @@
 
 /* Focus states */
 .btn:focus {
-  outline: 2px solid #3a7bd5;
+  outline: 3px solid rgba(58, 142, 186, 0.35);
   outline-offset: 2px;
 }
 
