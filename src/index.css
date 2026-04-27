@@ -1,35 +1,55 @@
 /* Global CSS Variables */
 :root {
-    --primary: #3a7bd5;
-    --primary-light: #eef5ff;
-    --primary-dark: #2c62b0;
-    --secondary: #6c757d;
-    --success: #00d1b2;
-    --info: #3298dc;
-    --warning: #ffdd57;
-    --danger: #ff3860;
-    --light: #f8f9fa;
-    --dark: #1a202c;
-    --gray: #8c98a4;
-    --gray-light: #f8fafd;
-    --white: #ffffff;
-    
-    --gradient-primary: linear-gradient(135deg, #3a7bd5, #00d1b2);
-    --gradient-warning: linear-gradient(135deg, #ffdd57, #ff7730);
-    --gradient-danger: linear-gradient(135deg, #ff3860, #ff5252);
-    --gradient-success: linear-gradient(135deg, #00d1b2, #2bb673);
-    
-    --sidebar-width: 260px;
-    --sidebar-collapsed-width: 70px;
-    --topbar-height: 65px;
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 16px;
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-    --transition-base: all 0.3s ease;
-  }
+  /* Brand (Centre Diagnostic) */
+  --primary: #3a8eba;
+  --primary-light: #e8f4f8;
+  --primary-dark: #295785;
+
+  /* Semantic */
+  --secondary: #6c757d;
+  --success: #00d1b2;
+  --info: #3298dc;
+  --warning: #ffdd57;
+  --danger: #ff3860;
+  --light: #f8f9fa;
+  --dark: #101828;
+  --gray: #8c98a4;
+  --gray-light: #f8fafd;
+  --white: #ffffff;
+
+  /* Surfaces / text */
+  --bg: #f3f6fb;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --text: #101828;
+  --text-muted: #667085;
+  --border: rgba(16, 24, 40, 0.10);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #3a8eba 0%, #295785 100%);
+  --gradient-warning: linear-gradient(135deg, #ffdd57, #ff7730);
+  --gradient-danger: linear-gradient(135deg, #ff3860, #ff5252);
+  --gradient-success: linear-gradient(135deg, #00d1b2, #2bb673);
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 70px;
+  --topbar-height: 65px;
+  --content-max-width: 1400px;
+
+  /* Radius / shadows */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 6px 18px rgba(16, 24, 40, 0.10);
+  --shadow-lg: 0 14px 40px rgba(16, 24, 40, 0.14);
+  --transition-base: all 0.25s ease;
+
+  /* Sidebar */
+  --sidebar-bg: linear-gradient(180deg, #0b1220 0%, #111b2f 100%);
+  --sidebar-border: rgba(255, 255, 255, 0.10);
+}
   
   /* Base Styles */
   * {
@@ -39,14 +59,31 @@
   }
   
   body {
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.9375rem;
-    color: var(--secondary);
-    background-color: #f0f4f9;
-    overflow-x: hidden;
-    min-height: 100vh;
-    position: relative;
-  }
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.9375rem;
+  color: var(--text);
+  background-color: var(--bg);
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+}
+
+/* Better default typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+/* Subtle selection */
+::selection {
+  background: rgba(58, 142, 186, 0.22);
+}
   
   /* Scrollbar styles */
   ::-webkit-scrollbar {
@@ -66,6 +103,12 @@
   ::-webkit-scrollbar-thumb:hover {
     background: var(--primary);
   }
+
+  /* Accessible focus */
+  :focus-visible {
+    outline: 3px solid rgba(58, 142, 186, 0.35);
+    outline-offset: 2px;
+  }
   
   /* Button styles */
   .btn {
@@ -75,13 +118,13 @@
     transition: all 0.3s ease;
     font-weight: 600;
     text-transform: capitalize;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 10px rgba(16, 24, 40, 0.10);
     letter-spacing: 0.3px;
   }
   
   .btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    box-shadow: 0 10px 22px rgba(16, 24, 40, 0.14);
   }
   
   .btn-icon {
@@ -110,6 +153,7 @@
   .btn-outline-primary:hover {
     background: var(--primary);
     border-color: var(--primary);
+    color: var(--white);
   }
   
   .btn-danger {
@@ -166,6 +210,29 @@
   .badge-danger {
     background-color: rgba(255, 56, 96, 0.15);
     color: var(--danger);
+  }
+
+  /* Bootstrap overrides: cleaner cards/tables */
+  .card,
+  .table-card {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    background: var(--surface);
+  }
+
+  .card-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table > :not(caption) > * > * {
+    border-bottom-color: var(--border);
+  }
+
+  .table thead th {
+    color: var(--text);
+    background: var(--surface-2);
   }
   
   /* Animations */

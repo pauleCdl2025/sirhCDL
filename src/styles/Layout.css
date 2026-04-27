@@ -9,6 +9,8 @@
   width: calc(100% - var(--sidebar-width));
   margin-left: var(--sidebar-width);
   transition: var(--transition-base);
+  background: var(--bg);
+  min-height: 100vh;
 }
 
 .main-content.expanded {
@@ -19,6 +21,8 @@
 /* Page content */
 .page-content {
   padding: 25px;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
 }
 
 /* Page title section */
@@ -31,7 +35,7 @@
   color: white;
   padding: 30px;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
   position: relative;
   overflow: hidden;
 }
